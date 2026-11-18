@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — page not found · cipherops_tech</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/app.css?v=4">
+</head>
+<body>
+<main class="wrap" style="min-height:100vh;display:flex;align-items:center;justify-content:center">
+  <div class="card" style="padding:40px;max-width:640px;display:grid;gap:14px">
+    <div class="eyebrow">HTTP/1.1 404 Not Found</div>
+    <h1 style="font-size:2.6rem">This page doesn't exist.</h1>
+    <p class="muted">If you got here by changing the URL by hand: nice instinct. That's how IDOR bugs are found. There's nothing to see here, though.</p>
+    <pre class="code">GET <span id="p">/</span> HTTP/1.1
+Host: cipherops-tech
+→ 404 Not Found</pre>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="/">← Back to cipherops_tech</a>
+      <a class="btn" href="/#labs">Go to the labs</a>
+    </div>
+  </div>
+</main>
+<script src="/assets/js/404.js" defer></script>
+</body>
+</html>

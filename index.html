@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cipherops_tech — learn cybersecurity, hands-on</title>
+<meta name="theme-color" content="#FBF9F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1020" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Learn web, mobile, cloud, red-team and LLM security hands-on: watch attacks packet by packet, solve browser-based CTF labs and follow guided paths. Free and beginner-friendly.">
+<link rel="canonical" href="https://cipherops-tech.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="cipherops_tech">
+<meta property="og:title" content="cipherops_tech — learn cybersecurity, hands-on">
+<meta property="og:description" content="Watch attacks packet by packet, break things in safe labs, and learn the fix. 52 lessons, 18 attack walkthroughs, 12 CTF labs.">
+<meta property="og:url" content="https://cipherops-tech.vercel.app/">
+<meta property="og:image" content="https://cipherops-tech.vercel.app/assets/img/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="cipherops_tech Attack Explorer showing a SQL injection packet travelling through a network">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/app.css?v=4">
+</head>
+<body>
+<a class="skip" href="#sim">Skip to the Attack Explorer</a>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="cipherops_tech home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2.5 24 6.6v6.7c0 6-4.2 10.7-10 12.2C8.2 24 4 19.3 4 13.3V6.6L14 2.5Z" fill="#FFFDF9" stroke="#1B2A4A" stroke-width="1.6"/><path d="M9.5 14.2l3 3 6-6.4" fill="none" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="color:var(--navy)">cipherops<span style="color:var(--teal)">_</span>tech</span>
+    </a>
+    <nav class="tabs" aria-label="Sections"><a href="#sim">Explorer</a><a href="#curriculum">Curriculum</a><a href="#labs">Labs</a><a href="#review">Review</a><a href="#paths">Paths</a><a href="#cheats">Cheat sheets</a><a href="#resources">Resources</a></nav>
+    <div class="hdr-tools"><button class="searchbtn" id="searchBtn" aria-label="Search">🔎 Search <kbd>/</kbd></button><button class="icon-btn themebtn" id="themeBtn" aria-label="Switch theme">☾</button><span class="ptspill" id="hdrPts">⚑ 0 pts</span><div class="hdr-prog" title="Lessons completed"><span id="hdrCount">0/0</span><div class="bar"><i id="hdrBar" style="width:0%"></i></div></div></div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO + SIM -->
+  <section class="wrap hero" id="sim">
+    <div class="hero-head">
+      <div>
+        <div class="eyebrow">Hands-on cybersecurity · basic → advanced</div>
+        <h1 style="margin-top:12px">Watch an attack travel,<br>packet by packet.</h1>
+        <p class="lede" style="margin-top:14px">Pick an attack, press Play and follow every request through the network. Click any packet to decode it byte by byte, then switch the defence on and watch where it stops.</p>
+      </div>
+      <div class="ctas">
+        <button class="btn primary" id="startBtn">Start lesson 1 →</button>
+        <button class="btn" id="attackBtn">▶ Watch an attack</button>
+        <a class="btn ghost" href="#placement">Find my level</a>
+      </div>
+    </div>
+
+    <div class="xp card" id="xp" tabindex="-1" aria-label="Attack Explorer">
+      <div class="xp-top">
+        <div class="xp-brand"><b>ATTACK EXPLORER</b><small>Every attack, packet by packet</small></div>
+        <div class="xp-stagewrap"><span class="eyebrow">Kill chain</span><div id="xStages" class="xstages" aria-label="Kill-chain stage of the current packet"></div></div>
+        <div class="xp-tools">
+          <div class="seg" role="group" aria-label="View"><button data-xview="network" aria-pressed="true">Network</button><button data-xview="sequence" aria-pressed="false">Sequence</button></div>
+          <button class="icon-btn" id="xFull" title="Full screen" aria-label="Full screen">⛶</button>
+        </div>
+      </div>
+      <aside class="xp-lib" id="xLib" aria-label="Attack library"></aside>
+      <div class="xp-view" id="xView"></div>
+      <aside class="xp-over" id="xOver" aria-label="Attack overview"></aside>
+      <div class="xp-flow">
+        <div class="xf-head"><b>PACKET FLOW</b><div id="xLegend" class="xlegend"></div><span class="spacer"></span>
+          <label class="mono muted" style="font-size:12px">speed <select id="xSpeed" class="xsel"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+          <button id="xPlay" class="btn sm primary">▶ Play</button><button id="xStep" class="btn sm">Step ›</button><button id="xReset" class="btn sm ghost">↺ Reset</button></div>
+        <div class="xtable-wrap"><table class="xtable"><thead><tr><th>No.</th><th>Time</th><th>Source</th><th>Destination</th><th>Protocol</th><th>Info</th><th class="r">Size</th></tr></thead><tbody id="xRows"></tbody></table></div>
+        <div class="xkeys mono muted">Space play/pause · → step · ← back · Esc close decoder · click a row to decode it</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLACEMENT -->
+  <section class="wrap block" id="placement">
+    <div class="sec-head"><div><div class="eyebrow">Placement test</div><h2 style="margin-top:8px">Not sure where to start?</h2>
+      <p>Answer 12 quick questions and we'll recommend a learning path and your first lesson.</p></div></div>
+    <div class="card pt" id="ptBox"></div>
+  </section>
+
+  <!-- CURRICULUM -->
+  <section class="wrap block" id="curriculum">
+    <div class="sec-head">
+      <div><div class="eyebrow">Curriculum · 6 modules</div><h2 style="margin-top:8px">Learn at your own pace</h2>
+        <p>Each lesson takes a few minutes and ends with a quick check. Most lessons link to an Attack Explorer walkthrough and a hands-on lab. Your progress is saved in this browser.</p></div>
+    </div>
+    <div class="modstrip" id="modstrip"></div>
+    <div class="curr">
+      <nav class="card sidebar" aria-label="Lessons" id="sidebar"></nav>
+      <article class="card reader" id="reader" aria-live="polite"></article>
+    </div>
+  </section>
+
+  <!-- LABS -->
+  <section class="wrap block" id="labs">
+    <div class="sec-head">
+      <div><div class="eyebrow">Labs · capture the flag</div><h2 style="margin-top:8px">Hands-on challenges</h2>
+        <p>Twelve guided challenges with flags, points and ranks: recon, web, mobile, cloud, AI and blue-team detection. Every target is a simulation in your browser. When you're ready for real machines, see Resources.</p></div>
+      <div class="filters" id="labFilters" role="group" aria-label="Filter labs"></div>
+    </div>
+    <div class="labs-wrap">
+      <div class="labgrid" id="labGrid"></div>
+      <aside class="card labscore" id="labScore" aria-label="Your lab score"></aside>
+    </div>
+    <div class="card labview" id="labView" hidden aria-live="polite"></div>
+  </section>
+
+  <!-- REVIEW -->
+  <section class="wrap block" id="review">
+    <div class="sec-head"><div><div class="eyebrow">Review · spaced repetition</div><h2 style="margin-top:8px">Flashcards that come back at the right time</h2>
+      <p>Cards from every lesson you finish, plus ports and HTTP status codes. Rate each one, and it returns just before you'd forget it. Keys: Space flips, 1–4 rates.</p></div></div>
+    <div class="fc" id="fcBox"></div>
+  </section>
+
+  <!-- PATHS -->
+  <section class="wrap block" id="paths">
+    <div class="sec-head"><div><div class="eyebrow">Learning paths</div><h2 style="margin-top:8px">Pick a goal, follow the path</h2>
+      <p>Each path strings lessons and labs into an order that builds up skills. Progress updates as you finish lessons and capture flags.</p></div></div>
+    <div class="pathgrid" id="pathGrid"></div>
+  </section>
+
+  <!-- CHEATS -->
+  <section class="wrap block" id="cheats">
+    <div class="sec-head"><div><div class="eyebrow">Cheat sheets</div><h2 style="margin-top:8px">Quick reference</h2>
+      <p>Condensed, original references for authorised testing, each with the defensive fix. Click ⧉ to copy an entry.</p></div></div>
+    <div class="cheattabs" id="cheatTabs" role="group" aria-label="Cheat sheet"></div>
+    <div class="card cheatbody" id="cheatBody"></div>
+  </section>
+
+  <!-- RESOURCES -->
+  <section class="wrap block" id="resources">
+    <div class="sec-head"><div><div class="eyebrow">Resources</div><h2 style="margin-top:8px">Go deeper, and practise for real</h2>
+      <p>cipherops_tech teaches the concepts gently. These are the best free references to dig into each technique. Every lesson links to the relevant page in them.</p></div></div>
+    <div class="resgrid">
+      <a class="card res" href="https://book.hacktricks.xyz/"><b>HackTricks</b><span>A huge, community-maintained wiki of offensive techniques across web, network, Linux, Windows and AD.</span><small>Reference</small></a>
+      <a class="card res" href="https://cloud.hacktricks.xyz/"><b>HackTricks Cloud</b><span>AWS, Azure, GCP, Kubernetes and CI/CD attack and defence notes.</span><small>Reference</small></a>
+      <a class="card res" href="https://www.hackingarticles.in/"><b>Hacking Articles</b><span>Step-by-step write-ups on red teaming, privilege escalation, AD and CTF machines.</span><small>Articles</small></a>
+      <a class="card res" href="https://portswigger.net/web-security"><b>PortSwigger Web Security Academy</b><span>Free, excellent web security lessons with real interactive labs.</span><small>Course + labs</small></a>
+      <a class="card res" href="https://cheatsheetseries.owasp.org/"><b>OWASP Cheat Sheet Series</b><span>Concise defensive guidance for developers on almost every topic here.</span><small>Defence</small></a>
+      <a class="card res" href="https://github.com/swisskyrepo/PayloadsAllTheThings"><b>PayloadsAllTheThings</b><span>A curated list of payloads and bypasses, organised by vulnerability.</span><small>Reference</small></a>
+      <a class="card res" href="https://attack.mitre.org/"><b>MITRE ATT&amp;CK</b><span>The shared map of attacker tactics and techniques used by red and blue teams.</span><small>Framework</small></a>
+      <a class="card res" href="https://gtfobins.github.io/"><b>GTFOBins</b><span>Unix binaries that can be abused to escalate privileges — and what to lock down.</span><small>Reference</small></a>
+      <a class="card res" href="https://mas.owasp.org/"><b>OWASP MAS (MASVS / MASTG)</b><span>The standard and testing guide for Android and iOS app security.</span><small>Mobile</small></a>
+      <a class="card res" href="https://genai.owasp.org/llm-top-10/"><b>OWASP Top 10 for LLM Apps</b><span>The 2026 list of the most critical risks in LLM applications.</span><small>AI</small></a>
+    </div>
+    <h3 style="margin:28px 0 12px">When you're ready for real machines</h3>
+    <div class="resgrid small">
+      <a class="card res" href="https://www.hackthebox.com/"><b>Hack The Box</b><span>Real vulnerable machines and pro labs.</span></a>
+      <a class="card res" href="https://tryhackme.com/"><b>TryHackMe</b><span>Guided rooms with in-browser VMs.</span></a>
+      <a class="card res" href="https://owasp.org/www-project-juice-shop/"><b>OWASP Juice Shop</b><span>A deliberately insecure web app to run locally.</span></a>
+      <a class="card res" href="https://picoctf.org/"><b>picoCTF</b><span>Beginner-friendly CTF challenges.</span></a>
+      <a class="card res" href="https://overthewire.org/wargames/"><b>OverTheWire</b><span>Classic Linux and security wargames.</span></a>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="wrap block" id="how">
+    <div class="sec-head"><div><div class="eyebrow">How it works</div><h2 style="margin-top:8px">Read it, try it, check it</h2></div></div>
+    <div class="how">
+      <div class="card"><span class="n">01</span><h3>Read a short lesson</h3><p class="muted">Plain-English explanations, with a few key ideas worth remembering.</p></div>
+      <div class="card"><span class="n">02</span><h3>Watch it, then try it</h3><p class="muted">Follow the attack packet by packet in the Explorer, then capture the flag in a lab.</p></div>
+      <div class="card"><span class="n">03</span><h3>Check and tick it off</h3><p class="muted">Answer one quick question, mark the lesson complete and watch your progress bar fill.</p></div>
+    </div>
+    <div class="callout warn" style="margin-top:var(--s4)"><span aria-hidden="true">✋</span><span><b>Practise only on systems you own or are allowed to test.</b> Everything here is a simulation in your browser. Nothing is sent anywhere.</span></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>cipherops_tech: a calm place to learn security. Everything runs in your browser; nothing you type is sent anywhere.</span>
+    <span>References: <a href="https://owasp.org/Top10/2025/">OWASP Top 10:2025</a> · <a href="https://genai.owasp.org/llm-top-10/">OWASP LLM Top 10</a> · <a href="https://mas.owasp.org/">OWASP MAS</a> · <a href="#top">Back to top ↑</a></span>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<div class="search" id="search" hidden role="dialog" aria-modal="true" aria-label="Search"><div class="box"><input id="searchIn" placeholder="Search lessons, labs and cheat sheets…" autocomplete="off"><div class="searchres" id="searchRes"></div></div></div>
+
+
+<script src="/assets/js/01-core.js?v=4" defer></script>
+<script src="/assets/js/02-lessons.js?v=4" defer></script>
+<script src="/assets/js/03-curriculum.js?v=4" defer></script>
+<script src="/assets/js/04-explorer.js?v=4" defer></script>
+<script src="/assets/js/05-labs.js?v=4" defer></script>
+<script src="/assets/js/06-learning.js?v=4" defer></script>
+<script src="/assets/js/07-boot.js?v=4" defer></script>
+</body>
+</html>
