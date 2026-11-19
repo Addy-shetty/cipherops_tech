@@ -24,7 +24,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/app.css?v=6">
+<link rel="stylesheet" href="/assets/css/app.css?v=8">
+<link rel="stylesheet" href="/assets/css/walk.css?v=2">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -35,7 +36,7 @@
       <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2.5 24 6.6v6.7c0 6-4.2 10.7-10 12.2C8.2 24 4 19.3 4 13.3V6.6L14 2.5Z" fill="#FFFDF9" stroke="#1B2A4A" stroke-width="1.6"/><path d="M9.5 14.2l3 3 6-6.4" fill="none" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span style="color:var(--navy)">cipherops<span style="color:var(--teal)">_</span>tech</span>
     </a>
-    <nav class="tabs" id="siteNav" aria-label="Sections"><a href="#sim">Explorer</a><a href="#curriculum">Curriculum</a><a href="#labs">Labs</a><a href="#review">Review</a><a href="#paths">Paths</a><a href="#cheats">Cheat sheets</a><a href="#resources">Resources</a><a href="/aws" class="nav-new">AWS Lab ✦</a><a href="/universe">Bounty Universe</a></nav>
+    <nav class="tabs" id="siteNav" aria-label="Main"><a href="/" class="navmain" aria-current="page">Security</a><a href="/ai-learning" class="navmain">AI &amp; LLM</a><a href="/aws" class="navmain">AWS Lab</a><a href="/universe" class="navmain">Bounty Universe</a><div class="navdd"><button type="button" class="navdd-btn" id="navDdBtn" aria-expanded="false" aria-controls="navDdMenu">On this page <span aria-hidden="true">▾</span></button><div class="navdd-menu" id="navDdMenu"><span class="navdd-h">On this page</span><a href="#sim">Attack Explorer</a><a href="#curriculum">Curriculum</a><a href="#labs">Labs</a><a href="#review">Review</a><a href="#paths">Learning paths</a><a href="#cheats">Cheat sheets</a><a href="#resources">Resources</a></div></div></nav>
     <div class="hdr-tools"><button class="searchbtn" id="searchBtn" aria-label="Search">🔎 Search <kbd>/</kbd></button><button class="icon-btn themebtn" id="themeBtn" aria-label="Switch theme">☾</button><span class="ptspill" id="hdrPts">⚑ 0 pts</span><div class="hdr-prog" title="Lessons completed"><span id="hdrCount">0/0</span><div class="bar"><i id="hdrBar" style="width:0%"></i></div></div><button class="icon-btn navbtn" id="navBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">☰</button></div>
   </div>
 </header>
@@ -54,6 +55,7 @@
         <button class="btn" id="attackBtn">▶ Watch an attack</button>
         <a class="btn ghost" href="#placement">Find my level</a>
         <a class="btn ghost" href="/aws">☁ AWS Security Lab</a>
+        <a class="btn ghost" href="/ai-learning">🧠 AI &amp; LLM course</a>
         <a class="btn ghost" href="/universe">✦ Explore 2,800+ bug bounty programs</a>
       </div>
     </div>
@@ -186,11 +188,13 @@
 
 <script src="/assets/js/01-core.js?v=4" defer></script>
 <script src="/assets/js/02-lessons.js?v=4" defer></script>
-<script src="/assets/js/03-curriculum.js?v=4" defer></script>
+<script src="/assets/aws/04-player.js?v=4" defer></script>
+<script src="/assets/js/08-walks.js?v=1" defer></script>
+<script src="/assets/js/03-curriculum.js?v=5" defer></script>
 <script src="/assets/js/04-explorer.js?v=4" defer></script>
 <script src="/assets/js/05-labs.js?v=4" defer></script>
 <script src="/assets/js/06-learning.js?v=4" defer></script>
 <script src="/assets/js/07-boot.js?v=4" defer></script>
-<script src="/assets/js/nav.js?v=1" defer></script>
+<script src="/assets/js/nav.js?v=2" defer></script>
 </body>
 </html>

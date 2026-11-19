@@ -38,12 +38,21 @@ function renderSidebar(){
     sb.append(wrap);
   });
 }
+const WSTEP={};
 function renderReader(){
   const L=LESSONS.find(l=>l.id===current), R=$("#reader"); R.innerHTML="";
   const idx=LESSONS.indexOf(L);
   R.append(el("div",{className:"crumb"},"Module "+(L.mi+1)+" · "+L.mod.title+" · Lesson "+(L.li+1)+" of "+L.mod.lessons.length));
   R.append(el("h2",{},L.title));
   R.append(el("div",{className:"meta"}, el("span",{className:"tag "+L.level},LEVEL_NAME[L.level]), el("span",{className:"tag"},"⏱ "+L.min+" min"), done.has(L.id)?el("span",{className:"done-badge"},"✓ Completed"):null));
+  if(typeof LESSON_SCENES!=="undefined"&&LESSON_SCENES[L.id]&&typeof WALK!=="undefined"){
+    const host=el("div",{className:"walkhost lwalk"});
+    R.append(el("div",{className:"lw-head"},el("span",{className:"eyebrow"},"Animated walkthrough"),el("span",{className:"muted lw-hint"},"Click inside, then use ← → to step")),host);
+    try{ WALK.render({id:"lesson-"+L.id,color:"#94A3B8"},LESSON_SCENES[L.id],host,{scopedKeys:true,start:WSTEP[L.id]||0,
+      onStep:i=>{ WSTEP[L.id]=i; },doneLabel:"Take the quick check ↓",
+      onDone:()=>{ const q=R.querySelector(".quiz"); if(q){ q.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); const b=q.querySelector("button"); if(b) b.focus({preventScroll:true}); } },
+      keyHint:"← → step · 1–9 jump · R replay · Space pause · F full screen (click the diagram first)"}); }catch(err){ console.error(err); }
+    R.append(el("div",{className:"eyebrow",style:"margin:18px 0 6px"},"In short")); }
   L.body.forEach(p=>R.append(el("p",{},p)));
   if(L.callout) R.append(el("div",{className:"callout warn"},el("span",{"aria-hidden":"true"},"✋"),el("span",{},L.callout)));
   if(L.example) R.append(el("div",{},el("div",{className:"eyebrow",style:"margin-bottom:8px"},"Example"),el("pre",{className:"code"},L.example)));
@@ -52,6 +61,8 @@ function renderReader(){
     R.append(el("div",{},el("div",{className:"eyebrow",style:"margin-bottom:10px"},"Practise"),el("div",{className:"practice"},
       lab?el("button",{className:"btn sm",onclick:()=>openLabView(lab.id,true)},"⚑ Lab: "+lab.title+(LP.solved[lab.id]!=null?" ✓":" · "+lab.points+" pts")):null,
       ch?el("button",{className:"btn sm",onclick:()=>openCheat(ch.id)},"⧉ Cheat sheet: "+ch.title):null))); }
+  { const AIX={llmapps:"prompt-to-response",pi:"prompt-injection",jail:"jailbreaks",hidden:"data-leakage",rag:"how-rag-works",agency:"what-is-agent",guard:"jailbreaks"};
+    if(AIX[L.id]) R.append(el("div",{className:"callout"},el("span",{"aria-hidden":"true"},"🧠"),el("span",{},"See how LLMs work under the hood, step by step, in the AI & LLM course. ",el("a",{href:"/ai-learning#/"+AIX[L.id]},"Open the lesson →")))); }
   if(L.links&&L.links.length) R.append(el("div",{},el("div",{className:"eyebrow",style:"margin-bottom:10px"},"Go deeper"),el("div",{className:"golinks"},L.links.map(([t,u])=>el("a",{href:u,target:"_blank",rel:"noopener"},t)))));
   { const sc=XS.find(x=>x.lesson===L.id)||(L.sim&&XS.find(x=>x.id===({normal:"normal",sqli:"sqli",prompt:"prompt"})[L.sim.payload])); const dflt=!!(L.sim&&(L.sim.gate||L.sim.patched));
     if(sc) R.append(el("div",{className:"callout"},el("span",{"aria-hidden":"true"},"📡"),el("span",{},"Watch this attack packet by packet in the Attack Explorer. ",el("button",{className:"btn sm",style:"margin-left:6px",onclick:()=>{ selectScenario(sc.id,{scroll:true,play:true,def:dflt}); }},"Open: "+sc.title+" →")))); }

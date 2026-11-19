@@ -7,5 +7,18 @@
   nav.addEventListener("click",function(e){ if(e.target.closest("a")) set(false); });
   document.addEventListener("click",function(e){ if(hdr.classList.contains("navopen")&&!hdr.contains(e.target)) set(false); });
   document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&hdr.classList.contains("navopen")){ set(false); btn.focus(); } });
-  window.addEventListener("resize",function(){ if(window.innerWidth>1320) set(false); });
+  window.addEventListener("resize",function(){ if(window.innerWidth>1200) set(false); });
+})();
+
+/* "On this page" dropdown */
+(function(){
+  var dd=document.querySelector(".navdd"), b=document.getElementById("navDdBtn"); if(!dd||!b) return;
+  var menu=dd.querySelector(".navdd-menu");
+  function set(o){ dd.classList.toggle("open",o); b.setAttribute("aria-expanded",o?"true":"false"); }
+  b.addEventListener("click",function(e){ e.stopPropagation(); var o=!dd.classList.contains("open"); set(o); if(o){ var a=menu.querySelector("a"); if(a) a.focus(); } });
+  menu.addEventListener("click",function(e){ if(e.target.closest("a")) set(false); });
+  menu.addEventListener("keydown",function(e){ var as=[].slice.call(menu.querySelectorAll("a")), i=as.indexOf(document.activeElement);
+    if(e.key==="ArrowDown"){ e.preventDefault(); as[(i+1)%as.length].focus(); } else if(e.key==="ArrowUp"){ e.preventDefault(); as[(i-1+as.length)%as.length].focus(); } });
+  document.addEventListener("click",function(e){ if(!dd.contains(e.target)) set(false); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&dd.classList.contains("open")){ set(false); b.focus(); } });
 })();

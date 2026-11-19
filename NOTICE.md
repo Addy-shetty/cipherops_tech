@@ -29,6 +29,11 @@ Real-account templates are provided as-is for learning; anyone deploying them is
 
 Program listings come from community datasets and can be out of date. A listing is not permission to test: the live policy on each program's page is the source of truth.
 
+## AI & LLM course
+- All lessons, diagrams and code samples are original. Code samples use the Anthropic Python SDK and
+  the public Messages API; model names change, so check https://docs.claude.com for current ones.
+- Token counts, timings, probabilities and scores shown in diagrams are illustrative, not measurements.
+
 ## Fonts
 Barlow, Barlow Semi Condensed (SIL Open Font License 1.1) and JetBrains Mono (SIL OFL 1.1), served by Google Fonts.
 

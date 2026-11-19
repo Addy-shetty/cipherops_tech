@@ -1,0 +1,67 @@
+/* cipherops_tech — AI & LLM course page */
+.ai-sub{white-space:nowrap;flex:none;font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:#7C3AED;border:1.5px solid rgba(124,58,237,.4);border-radius:999px;padding:2px 7px;margin-left:2px}
+html[data-theme="dark"] .ai-sub{color:#C4B5FD;border-color:rgba(196,181,253,.45)}
+.ai-shell{display:grid;grid-template-columns:300px minmax(0,1fr);gap:var(--s6);align-items:start;padding-top:var(--s5);padding-bottom:var(--s7)}
+.ai-side{position:sticky;top:78px;max-height:calc(100vh - 92px);overflow:auto;padding-right:4px}
+.ai-sidetoggle{display:none}
+.ai-prog{padding:12px 14px;margin-bottom:12px}
+.ai-prog .f-h{display:flex;justify-content:space-between;font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--navy-3);margin-bottom:8px}
+.ai-prog .bar{height:8px;border-radius:99px;background:var(--paper-2);border:1px solid var(--line);overflow:hidden}
+.ai-prog .bar i{display:block;height:100%;background:var(--teal);border-radius:99px;transition:width .4s}
+.ai-prog small{display:block;margin-top:6px;font-size:13px}
+.ai-mod{border-bottom:1.5px solid var(--line)}
+.ai-mod summary{display:flex;align-items:center;gap:10px;padding:11px 4px;cursor:pointer;list-style:none;font-weight:600}
+.ai-mod summary::-webkit-details-marker{display:none}
+.ai-mod summary::after{content:"▸";margin-left:auto;color:var(--navy-3);transition:transform .2s} .ai-mod[open] summary::after{transform:rotate(90deg)}
+.ai-mn{flex:none;width:24px;height:24px;border-radius:7px;display:inline-grid;place-items:center;font:600 12px var(--f-mono);border:1.5px solid var(--navy);background:var(--card)}
+.ai-mt{flex:1;line-height:1.25} .ai-mc{font-size:11.5px;color:var(--navy-3)}
+.ai-mod ol{list-style:none;margin:0 0 10px;padding:0 0 0 6px;display:grid;gap:2px}
+.ai-mod a{display:flex;gap:8px;align-items:baseline;padding:7px 8px;border-radius:9px;text-decoration:none;color:var(--navy-2);font-size:15px;line-height:1.3}
+.ai-mod a:hover{background:var(--paper-2);color:var(--navy)}
+.ai-mod a.cur{background:var(--teal-soft);color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--teal)}
+.ai-mod a small{margin-left:auto;font-size:11px;color:var(--navy-3);flex:none}
+.ai-chk{flex:none;width:16px;height:16px;border-radius:5px;border:1.5px solid var(--line-2);font-size:11px;line-height:13px;text-align:center;color:#fff}
+.ai-mod a.done .ai-chk{background:var(--teal);border-color:var(--teal-2)}
+.ai-main{min-width:0;outline:none}
+.ai-main .crumb{font:500 12.5px var(--f-mono);color:var(--navy-3);margin-bottom:6px} .ai-main .crumb a{color:var(--teal-2)}
+.ai-lh h1{font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1.1;margin:4px 0 10px}
+.ai-lh .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.ai-lh .lede{margin:0 0 var(--s5);max-width:70ch}
+.ai-sec{margin-top:var(--s6)} .ai-sec>h2{font-size:1.5rem;margin:0 0 var(--s4)}
+.ai-sec .quiz{margin-bottom:var(--s4)}
+.ai-code{margin:0 0 var(--s4);padding:0;overflow:hidden}
+.ai-code figcaption{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1.5px solid var(--line);font-weight:600;font-size:15px}
+.ai-code figcaption .btn{margin-left:auto}
+.ai-lang{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7C3AED;border:1px solid rgba(124,58,237,.4);border-radius:6px;padding:1px 6px}
+.ai-pre{margin:0;padding:14px 16px;overflow:auto;background:var(--paper-2);font:400 13.5px/1.6 var(--f-mono);color:var(--navy);tab-size:4;max-height:520px}
+.ai-pre:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+.c-com{color:var(--navy-3);font-style:italic} .c-str{color:#047857} .c-kw{color:#7C3AED;font-weight:600} .c-num{color:#B45309} .c-fn{color:#1D4ED8} .c-key{color:#BE185D}
+html[data-theme="dark"] .c-str{color:#6EE7B7} html[data-theme="dark"] .c-kw{color:#C4B5FD} html[data-theme="dark"] .c-num{color:#FCD34D} html[data-theme="dark"] .c-fn{color:#93C5FD} html[data-theme="dark"] .c-key{color:#F9A8D4}
+.ai-out{border-top:1.5px dashed var(--line-2);padding:8px 16px 12px;background:var(--card)}
+.ai-out span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--navy-3)}
+.ai-out pre{margin:4px 0 0;font:400 13px/1.55 var(--f-mono);white-space:pre-wrap;color:var(--teal-2)}
+.ai-main>.callout{margin-top:var(--s5)}
+.ai-main .rfoot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:var(--s6);padding-top:var(--s4);border-top:1.5px solid var(--line)}
+.ai-main .rfoot .spacer{flex:1}
+.ai-hero{padding:var(--s4) 0 var(--s5)}
+.ai-hero h1{font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.05;margin:8px 0 12px;max-width:20ch}
+.ai-hero .ctas{display:flex;gap:10px;flex-wrap:wrap;margin:var(--s4) 0 10px}
+.ai-mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:var(--s4)}
+.ai-modcard{padding:16px 18px} .ai-modcard h3{margin:6px 0 4px;font-size:1.25rem} .ai-modcard p{margin:0 0 10px;font-size:15px}
+.ai-modcard ol{margin:0;padding-left:18px;display:grid;gap:6px;font-size:15px}
+.ai-modcard li{padding-left:2px} .ai-modcard li a{color:var(--navy);text-decoration:none} .ai-modcard li a:hover{color:var(--teal-2);text-decoration:underline}
+.ai-modcard .tag{margin-left:6px;font-size:10.5px;padding:2px 6px;vertical-align:1px}
+.ai-sh{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--navy-3);padding:8px 12px 2px}
+.sres small{font-size:12.5px}
+@media (max-width:980px){
+  .ai-shell{grid-template-columns:minmax(0,1fr);gap:var(--s4);padding-top:var(--s4)}
+  .ai-side{position:static;max-height:none;overflow:visible;padding:0}
+  .ai-sidetoggle{display:inline-flex}
+  .ai-sidebody{display:none;margin-top:10px}
+  .ai-side.open .ai-sidebody{display:block}
+}
+@media (max-width:760px){.ai-sub{display:none}.ai-pre{font-size:12.5px;padding:12px}.ai-code figcaption{font-size:14px;flex-wrap:wrap}}
+@media (max-width:420px){.searchbtn kbd{display:none}}
+.ai-pre code{display:block;background:none;border:0;padding:0;border-radius:0;font:inherit;color:inherit;white-space:pre}
+.ai-out pre,.ai-pre{white-space:pre}
+.ai-out pre{white-space:pre-wrap}

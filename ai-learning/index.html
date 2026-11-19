@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI & LLM — how models work, how to build with them, how to secure them · cipherops_tech</title>
+<meta name="description" content="23 animated, step-by-step lessons on LLMs: tokens, sampling, the Messages API, streaming, tool use, prompt engineering, RAG, agents, prompt injection, guardrails and cost control.">
+<meta name="theme-color" content="#FBF9F5">
+<link rel="canonical" href="https://cipherops-tech.vercel.app/ai-learning">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="cipherops_tech">
+<meta property="og:title" content="AI & LLM course — cipherops_tech">
+<meta property="og:description" content="Follow a prompt through tokens, attention and sampling, then build with APIs, RAG and agents, and learn to secure them. 23 animated lessons.">
+<meta property="og:url" content="https://cipherops-tech.vercel.app/ai-learning">
+<meta property="og:image" content="https://cipherops-tech.vercel.app/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/app.css?v=8">
+<link rel="stylesheet" href="/assets/css/walk.css?v=2">
+<link rel="stylesheet" href="/assets/ai/ai.css?v=1">
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<a class="skip" href="#lesson">Skip to the lesson</a>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="cipherops_tech home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2.5 24 6.6v6.7c0 6-4.2 10.7-10 12.2C8.2 24 4 19.3 4 13.3V6.6L14 2.5Z" fill="#FFFDF9" stroke="#1B2A4A" stroke-width="1.6"/><path d="M9.5 14.2l3 3 6-6.4" fill="none" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="color:var(--navy)">cipherops<span style="color:var(--teal)">_</span>tech</span>
+      <small class="ai-sub">AI &amp; LLM</small>
+    </a>
+    <nav class="tabs" id="siteNav" aria-label="Main"><a href="/" class="navmain">Security</a><a href="/ai-learning" class="navmain" aria-current="page">AI &amp; LLM</a><a href="/aws" class="navmain">AWS Lab</a><a href="/universe" class="navmain">Bounty Universe</a><div class="navdd"><button type="button" class="navdd-btn" id="navDdBtn" aria-expanded="false" aria-controls="navDdMenu">On this page <span aria-hidden="true">▾</span></button><div class="navdd-menu" id="navDdMenu"><span class="navdd-h">On this page</span><a href="#/">Course home</a><a href="#/prompt-to-response">Foundations</a><a href="#/first-api-call">Building with APIs</a><a href="#/prompt-anatomy">Prompt engineering</a><a href="#/how-rag-works">RAG</a><a href="#/what-is-agent">Agents</a><a href="#/prompt-injection">Security &amp; safety</a></div></div></nav>
+    <div class="hdr-tools"><button class="searchbtn" id="searchBtn" aria-label="Search lessons">🔎 Search <kbd>Ctrl K</kbd></button><button class="icon-btn themebtn" id="themeBtn" aria-label="Switch theme">☾</button><div class="hdr-prog" title="Lessons completed"><span id="aiCount">0/23</span><div class="bar"><i id="aiBar" style="width:0%"></i></div></div><button class="icon-btn navbtn" id="navBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">☰</button></div>
+  </div>
+</header>
+
+<div class="ai-shell wrap">
+  <aside class="ai-side" id="side" aria-label="Course contents">
+    <button class="btn sm ai-sidetoggle" id="sideToggle" aria-expanded="false" aria-controls="sideBody">☰ Lessons</button>
+    <div class="ai-sidebody" id="sideBody">
+      <div class="ai-prog card"><div class="f-h"><span>Your progress</span><span class="mono" id="progPct">0%</span></div><div class="bar"><i id="progBar" style="width:0%"></i></div><small class="muted" id="progTxt"></small></div>
+      <nav id="toc" aria-label="Lessons"></nav>
+    </div>
+  </aside>
+  <main class="ai-main" id="lesson" tabindex="-1"></main>
+</div>
+
+<footer>
+  <div class="wrap"><span>© cipherops_tech · Original lessons. Token counts, timings and scores in diagrams are illustrative.</span>
+  <span>Code samples use the Anthropic Python SDK; check the <a href="https://docs.claude.com" target="_blank" rel="noopener">official docs</a> for current model names and parameters.</span></div>
+</footer>
+<div class="search" id="search" hidden role="dialog" aria-modal="true" aria-label="Search lessons"><div class="box"><input id="searchIn" placeholder="Search lessons and steps…  (↑ ↓ to move, Enter to open)" autocomplete="off" aria-controls="searchRes"><div class="searchres" id="searchRes" role="listbox"></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/assets/aws/04-player.js?v=4" defer></script>
+<script src="/assets/ai/01-course.js?v=1" defer></script>
+<script src="/assets/ai/02-course.js?v=1" defer></script>
+<script src="/assets/ai/03-app.js?v=1" defer></script>
+<script src="/assets/js/nav.js?v=2" defer></script>
+</body>
+</html>

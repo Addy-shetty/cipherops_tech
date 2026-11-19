@@ -1,6 +1,12 @@
 /* cipherops_tech — step-through animated walkthrough player (isometric SVG) */
 "use strict";
 const WALK=(()=>{
+  /* self-contained DOM helpers, so the player works on any page */
+  const A$=(q,r)=>(r||document).querySelector(q), A$$=(q,r)=>[...(r||document).querySelectorAll(q)];
+  function ael(tag,attrs,...kids){ const e=document.createElement(tag); attrs=attrs||{};
+    for(const k in attrs){ const v=attrs[k]; if(v==null||v===false) continue;
+      if(k==="style") e.style.cssText=v; else if(k==="className") e.className=v; else if(k.startsWith("on")) e[k]=v; else if(k==="text") e.textContent=v; else e.setAttribute(k,v===true?"":v); }
+    kids.flat(Infinity).forEach(c=>{ if(c==null||c===false) return; e.append(c.nodeType?c:document.createTextNode(String(c))); }); return e; }
   const NS="http://www.w3.org/2000/svg";
   const sv=(tag,attrs,...kids)=>{ const e=document.createElementNS(NS,tag); for(const k in (attrs||{})){ if(attrs[k]!=null) e.setAttribute(k,attrs[k]); } kids.flat().forEach(c=>{ if(c==null) return; e.append(c.nodeType?c:document.createTextNode(String(c))); }); return e; };
   const KIND={block:{w:50,h:34},big:{w:66,h:44},flat:{w:46,h:8},tall:{w:40,h:58},user:{w:0,h:0},shield:{w:40,h:22}};
@@ -35,19 +41,22 @@ const WALK=(()=>{
     const btnReplay=ael("button",{className:"wbtn",title:"Replay this step (R)","aria-label":"Replay this step",onclick:()=>{ t0=performance.now(); }},"↺");
     const btnPause=ael("button",{className:"wbtn",title:"Pause (Space)","aria-label":"Pause animation",onclick:()=>togglePause()},"❚❚");
     const rail=ael("ol",{className:"wrail","aria-label":"Steps"});
-    const stage=ael("div",{className:"wstage card"},metricsEl,ael("div",{className:"wcanvas"},svg,ael("div",{className:"wctl"},btnReplay,btnPause)),legend);
+    const btnFull=ael("button",{className:"wbtn",title:"Full screen (F)","aria-label":"Toggle full screen",onclick:()=>toggleFull()},"⛶");
+    const stage=ael("div",{className:"wstage card"},metricsEl,ael("div",{className:"wcanvas"},ael("div",{className:"wscroll"},svg),ael("div",{className:"wctl"},btnReplay,btnPause,btnFull)),legend);
+    function toggleFull(){ try{ if(document.fullscreenElement) document.exitFullscreen(); else if(stage.requestFullscreen) stage.requestFullscreen(); }catch(e){} }
     const railBox=ael("div",{className:"wrailbox card"},ael("div",{className:"wrail-h"},ael("span",{},"In this walkthrough"),ael("span",{className:"wcount"})),rail);
-    const panel=ael("div",{className:"wpanel card"});
+    const panel=ael("div",{className:"wpanel card","aria-live":"polite"});
     const learn=ael("div",{className:"wlearn card"},ael("div",{className:"f-h"},"You'll learn"),ael("ul",{},scene.learn.map((l,k)=>ael("li",{"data-k":k},ael("span",{className:"box"}),l))));
     root.append(ael("div",{className:"wmain"},stage,railBox),ael("aside",{className:"wside"},panel,learn));
     host.append(root);
+    if(opts.scopedKeys){ root.tabIndex=-1; root.addEventListener("pointerdown",e=>{ if(!e.target.closest("button,a,input,select,textarea")) root.focus({preventScroll:true}); }); }
 
     /* ---- static scene ---- */
     (scene.edges||[]).forEach(([a,b])=>{ const A=anchor(a),B=anchor(b); gEdges.append(sv("line",{x1:A.x,y1:A.y,x2:B.x,y2:B.y,stroke:"currentColor","stroke-opacity":".16","stroke-width":"1.5","stroke-dasharray":"4 5"})); });
     (scene.zones||[]).forEach(z=>{ gEdges.prepend(sv("g",{},sv("path",{d:"M"+z.x+" "+(z.y+z.h/2)+" L"+(z.x+z.w/2)+" "+z.y+" L"+(z.x+z.w)+" "+(z.y+z.h/2)+" L"+(z.x+z.w/2)+" "+(z.y+z.h)+" Z",fill:z.c||"currentColor","fill-opacity":".06",stroke:z.c||"currentColor","stroke-opacity":".35","stroke-dasharray":"6 6"}),
       sv("text",{x:z.x+z.w/2,y:z.y+z.h+16,"text-anchor":"middle",class:"wzone"},z.label))); });
     const nodeEls={};
-    scene.nodes.forEach(n=>{ const k=KIND[n.kind||"block"], c=n.c||GROUPS[mod.group].c, g=sv("g",{class:"wnode"});
+    scene.nodes.forEach(n=>{ const k=KIND[n.kind||"block"], c=n.c||mod.color||((typeof GROUPS!=="undefined"&&GROUPS[mod.group])?GROUPS[mod.group].c:"#94A3B8"), g=sv("g",{class:"wnode"});
       if(n.kind==="user"){ g.append(sv("ellipse",{cx:n.x,cy:n.y,rx:20,ry:9,fill:"currentColor","fill-opacity":".08"}),sv("rect",{x:n.x-11,y:n.y-30,width:22,height:28,rx:10,fill:c,stroke:"#1B2A4A","stroke-width":"1.6",class:"wfill"}),sv("circle",{cx:n.x,cy:n.y-38,r:8,fill:"#FFFDF9",stroke:"#1B2A4A","stroke-width":"1.6"})); }
       else { const w=k.w,h=k.h,x=n.x,y=n.y;
         const top="M"+x+" "+(y-h-w/2)+" L"+(x+w)+" "+(y-h)+" L"+x+" "+(y-h+w/2)+" L"+(x-w)+" "+(y-h)+" Z";
@@ -66,7 +75,7 @@ const WALK=(()=>{
       let x0=Math.min(...xs)-110, x1=Math.max(...xs)+120, y0=Math.min(...ys)-140, y1=Math.max(...ys)+70;
       x0=Math.max(0,x0); x1=Math.min(900,x1); y0=Math.max(0,y0); y1=Math.min(520,y1);
       if(y1-y0<340){ const c=(y0+y1)/2; y0=Math.max(0,c-170); y1=Math.min(520,y0+340); }
-      svg.setAttribute("viewBox",x0+" "+y0+" "+(x1-x0)+" "+(y1-y0)); }
+      svg.setAttribute("viewBox",x0+" "+y0+" "+(x1-x0)+" "+(y1-y0)); svg.style.setProperty("--wmin",Math.round((x1-x0)*0.66)+"px"); }
     /* ---- step rendering ---- */
     let flows=[];
     function setStep(k){
@@ -91,7 +100,7 @@ const WALK=(()=>{
         const stop=opt.stop!=null?opt.stop:1; const ex=A.x+(B.x-A.x)*stop, ey=A.y+(B.y-A.y)*stop;
         gFlows.append(sv("line",{x1:A.x,y1:A.y,x2:ex,y2:ey,stroke:col,"stroke-width":"2.4","stroke-linecap":"round","marker-end":stop<1?null:"url(#wa-"+type+"-"+mod.id+")","stroke-opacity":".85"}));
         if(stop<1) gTop.append(sv("g",{},sv("circle",{cx:ex,cy:ey,r:11,fill:"#FFFDF9",stroke:col,"stroke-width":"2"}),sv("text",{x:ex,y:ey+5,"text-anchor":"middle",fill:col,class:"wx"},"✕")));
-        if(label){ const mx=(A.x+ex)/2, my=(A.y+ey)/2-12, w=label.length*6.6+16; gFlows.append(sv("g",{},sv("rect",{x:mx-w/2,y:my-11,width:w,height:20,rx:6,fill:"#FFFDF9",stroke:col,"stroke-width":"1.2"}),sv("text",{x:mx,y:my+3,"text-anchor":"middle",class:"wfl",fill:col},label))); }
+        if(label){ const mx=(A.x+ex)/2, my=(A.y+ey)/2-12, w=label.length*6.6+16; gTop.append(sv("g",{class:"wflabel"},sv("rect",{x:mx-w/2,y:my-11,width:w,height:20,rx:6,fill:"#FFFDF9",stroke:col,"stroke-width":"1.2"}),sv("text",{x:mx,y:my+3,"text-anchor":"middle",class:"wfl",fill:col},label))); }
         const n=opt.n||3, dots=[]; for(let d=0;d<n;d++){ const c=sv("circle",{r:opt.r||5.5,fill:col,stroke:"#1B2A4A","stroke-width":"1.2"}); gDots.append(c); dots.push(c); }
         flows.push({A,ex,ey,dots,n,speed:opt.speed||0.55,stop,delay:opt.delay||0}); });
       // panel
@@ -101,13 +110,14 @@ const WALK=(()=>{
         S.k?ael("div",{className:"wkey"},ael("div",{className:"f-h"},"Key idea"),ael("p",{},rich(S.k))):null,
         ael("div",{className:"wnav"},ael("button",{className:"btn ghost",disabled:i===0,onclick:()=>setStep(i-1)},"← Back"),
           i<scene.steps.length-1?ael("button",{className:"btn primary",onclick:()=>setStep(i+1)},"Next: "+scene.steps[i+1].short+" →"):ael("button",{className:"btn primary",onclick:()=>opts.onDone&&opts.onDone()},opts.doneLabel||"Start the lab →")),
-        ael("div",{className:"wkeys muted"},"← → step · R replay · Space pause")].filter(Boolean));
+        ael("div",{className:"wkeys muted"},opts.keyHint||"← → step · 1–9 jump · R replay · Space pause · F full screen")].filter(Boolean));
       // rail
       rail.innerHTML=""; scene.steps.forEach((s,k)=>rail.append(ael("li",{className:(k===i?"cur ":"")+(k<=saved.max?"seen":"")},ael("button",{"aria-label":"Step "+(k+1)+": "+s.short,"aria-current":k===i?"step":null,onclick:()=>setStep(k)},ael("b",{},String(k+1))),k===i?ael("span",{},s.short):null)));
       A$(".wcount",railBox).textContent="Step "+(i+1)+" of "+scene.steps.length;
       // learn ticks
       const got=new Set(); scene.steps.forEach((s,k)=>{ if(k<=saved.max&&s.l!=null) got.add(s.l); });
       A$$("li",learn).forEach(li=>li.classList.toggle("on",got.has(+li.dataset.k)));
+      if(opts.onStep) opts.onStep(i,saved.max);
       if(i===scene.steps.length-1&&opts.onComplete) opts.onComplete();
       if(paused) frame(performance.now()+1200);
     }
@@ -118,7 +128,10 @@ const WALK=(()=>{
         d.setAttribute("cx",x.toFixed(1)); d.setAttribute("cy",y.toFixed(1)); d.setAttribute("opacity",p>.92?((1-p)/.08).toFixed(2):"1"); }); }); }
     function loop(now){ if(!alive) return; if(!document.body.contains(root)){ alive=false; document.removeEventListener("keydown",onKey); return; } if(!paused) frame(performance.now()); raf=requestAnimationFrame(loop); }
     function togglePause(){ paused=!paused; btnPause.textContent=paused?"▶":"❚❚"; btnPause.setAttribute("aria-label",paused?"Play animation":"Pause animation"); }
-    function onKey(e){ if(!document.body.contains(root)) return; if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    function onKey(e){ if(!document.body.contains(root)) return; if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey||e.altKey) return;
+      if(opts.scopedKeys&&!root.contains(document.activeElement)) return;
+      if(e.key==="f"||e.key==="F"){ toggleFull(); e.preventDefault(); return; }
+      if(/^[1-9]$/.test(e.key)&&+e.key<=scene.steps.length){ setStep(+e.key-1); e.preventDefault(); return; }
       if(e.key==="ArrowRight"){ setStep(i+1); e.preventDefault(); } else if(e.key==="ArrowLeft"){ setStep(i-1); e.preventDefault(); }
       else if(e.key==="r"||e.key==="R"){ t0=performance.now(); } else if(e.key===" "&&root.contains(document.activeElement)||e.key===" "&&document.activeElement===document.body){ togglePause(); e.preventDefault(); } }
     document.addEventListener("keydown",onKey);

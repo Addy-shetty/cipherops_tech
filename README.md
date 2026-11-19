@@ -11,6 +11,14 @@ red team and LLM security, from basic to advanced.
 - **Labs**: 12 CTF-style challenges with flags, points, hints and ranks. All are simulated in the browser.
 - **Placement test**: 12 questions that recommend a learning path.
 - **Flashcards**: spaced repetition with Leitner boxes, built from lessons, ports and HTTP status codes.
+- **AI & LLM course** (`/ai-learning`): 23 animated step-through lessons in six modules
+  (foundations, building with the API, prompt engineering, RAG, agents, security & safety), each with
+  code samples, a quiz and progress saved in the browser. Content lives in `assets/ai/01-course.js`
+  and `assets/ai/02-course.js`; the page logic is `assets/ai/03-app.js`.
+- **Lesson walkthroughs**: 12 core curriculum lessons (CIA, HTTP, SQLi, XSS, IDOR, CSRF, SSRF, JWT,
+  S3, IMDS, Kerberoasting, prompt injection) open with an animated walkthrough
+  (`assets/js/08-walks.js`). All walkthroughs share one player, `assets/aws/04-player.js`, and
+  `assets/css/walk.css`.
 - **AWS Security Lab** (`/aws`): 12 AWS security services (IAM, SCPs, KMS, Secrets Manager, S3,
   CloudTrail, Config, GuardDuty, Security Hub, Inspector, Macie, WAF & Shield). Each has an
   animated step-through walkthrough, a reference lesson, a browser lab (IAM policy evaluator,

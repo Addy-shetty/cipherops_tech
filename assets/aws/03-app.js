@@ -54,7 +54,7 @@ function openModule(id,tab,scroll){
   drawMap();
   if(scroll!==false) host.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"});
 }
-function renderWalk(m,b){ const sc=SCENES[m.id]; if(!sc){ renderLearn(m,b); return; }
+function renderWalk(m,b){ const sc=SCENES[m.id]; if(!sc){ renderLearn(m,b); return; } b.classList.add("walkhost");
   walker=WALK.render(m,sc,b,{onComplete:()=>{ AP.walk=AP.walk||{}; if(!AP.walk[m.id]){ AP.walk[m.id]=true; saveAP(); drawMap(); } },onDone:()=>openModule(m.id,"lab"),doneLabel:"Start the lab →"});
   b.append(ael("p",{className:"muted wfoot"},"Want the reference version? ",ael("button",{className:"linkbtn",onclick:()=>openModule(m.id,"learn")},"Open the Learn tab"),": key ideas, failure modes, a checklist and CLI commands.")); }
 function renderLearn(m,b){
