@@ -306,13 +306,39 @@ function networkView(){
   let svg=`<svg class="xnet" viewBox="20 0 960 500" role="img" aria-label="Network diagram"><defs><pattern id="g" width="40" height="20" patternUnits="userSpaceOnUse"><path d="M0,10 L20,0 L40,10 L20,20 Z" class="gridline"/></pattern></defs><rect width="1000" height="500" fill="url(#g)" opacity=".55"/>`;
   edges.forEach(e=>{ const [a,b]=e.split("|"), A=XN[a], Bn=XN[b]; const act=pk&&[pk.s,pk.d].sort().join("|")===e; svg+=`<line class="edge${act?" act k-"+pk.kind:""}" x1="${A.x}" y1="${A.y+18}" x2="${Bn.x}" y2="${Bn.y+18}"/>`; });
   Object.keys(XN).forEach(k=>{ const n=nodeInfo(k), on=inv.has(k), hit=pk&&pk.d===k&&pk.kind==="alert", blk=pk&&pk.kind==="blk"&&((X.sc.def&&X.sc.def.node===k)||pk.s===k), defn=X.def&&X.sc.def&&X.sc.def.node===k;
-    svg+=`<g class="xnode${on?"":" off"}${hit?" hit":""}${blk?" blkd":""}" transform="translate(${n.x},${n.y})"><g transform="translate(0,-26) scale(1.35)">${defn?`<ellipse class="shield" cx="-8" cy="22" rx="62" ry="28"/>`:""}${icon(n.icon)}</g><text class="nl" x="-8" y="82" text-anchor="middle">${n.l}</text><text class="nip" x="-8" y="100" text-anchor="middle">${n.ip}</text>${defn?`<text class="nl def" x="-8" y="-72" text-anchor="middle">🛡 ${X.sc.def.ctrl.split(" ")[0]}…</text>`:""}</g>`; });
+    svg+=`<g class="xnode${on?"":" off"}${hit?" hit":""}${blk?" blkd":""}${X.pick===k?" picked":""}" data-node="${k}" tabindex="0" role="button" aria-label="${n.l}, ${n.ip}. Show details" transform="translate(${n.x},${n.y})"><g transform="translate(0,-26) scale(1.35)">${defn?`<ellipse class="shield" cx="-8" cy="22" rx="62" ry="28"/>`:""}${icon(n.icon)}</g><text class="nl" x="-8" y="82" text-anchor="middle">${n.l}</text><text class="nip" x="-8" y="100" text-anchor="middle">${n.ip}</text>${defn?`<text class="nl def" x="-8" y="-72" text-anchor="middle">🛡 ${X.sc.def.ctrl.split(" ")[0]}…</text>`:""}</g>`; });
   svg+=`<circle id="xPkt" r="11" class="pkt" cx="-50" cy="-50"/><text id="xPktLbl" class="pktl" x="-50" y="-50"></text></svg>`;
   const wrap=el("div",{className:"xnetwrap",html:svg});
-  const cap=el("div",{className:"xcap"}, pk? [el("b",{},(X.i+1)+". "),pk.info]: ["Press ",el("b",{},"Play")," or ",el("b",{},"Step")," to send the first packet. Click any row below to decode it."]);
+  const cap=el("div",{className:"xcap"}, pk? [el("b",{},(X.i+1)+". "),pk.info]: ["Press ",el("b",{},"Play")," or ",el("b",{},"Step")," to send the first packet. Click any machine for details, or any row below to decode it."]);
   wrap.append(cap);
+  const pop=el("div",{className:"xpop",hidden:true}); wrap.append(pop);
+  const open=k=>{ X.pick=k; const n=nodeInfo(k), list=packetsOf().map((q,ix)=>[q,ix]).filter(([q])=>q.s===k||q.d===k);
+    $$(".xnode",wrap).forEach(g=>g.classList.toggle("picked",g.dataset.node===k));
+    pop.innerHTML=""; pop.append(el("button",{className:"xpop-x","aria-label":"Close",onclick:e=>{ e.stopPropagation(); close(); }},"✕"),
+      el("div",{className:"xpop-h"},n.l),el("div",{className:"xpop-ip mono"},n.ip),el("p",{},XROLE[k]||""),
+      list.length?el("div",{className:"xpop-l"},el("div",{className:"eyebrow"},"In this attack: "+list.length+" packet"+(list.length>1?"s":"")),
+        el("ol",{},list.slice(0,6).map(([q,ix])=>el("li",{},el("button",{className:"xpop-pk"+(ix===X.i?" cur":""),onclick:e=>{ e.stopPropagation(); xStop(); X.pick=k; xGo(ix); }},el("i",{style:"background:"+(KIND[q.kind]||["",""])[1]}),(q.s===k?"→ "+nodeInfo(q.d).l:"← "+nodeInfo(q.s).l)+": "+q.info.slice(0,44))))),list.length>6?el("small",{className:"muted"},"+"+(list.length-6)+" more in the packet table"):null)
+        :el("p",{className:"muted"},"Not involved in this attack. Pick another one from the library to see it in action."));
+    pop.hidden=false; const g=$$(".xnode",wrap).find(x=>x.dataset.node===k), gr=g.getBoundingClientRect(), wr=wrap.getBoundingClientRect();
+    let L=gr.right-wr.left+8, T=gr.top-wr.top-10; if(L+pop.offsetWidth>wr.width-8) L=gr.left-wr.left-pop.offsetWidth-8; if(L<8) L=8; T=Math.max(8,Math.min(wr.height-pop.offsetHeight-8,T));
+    pop.style.left=L+"px"; pop.style.top=T+"px"; };
+  const close=()=>{ X.pick=null; pop.hidden=true; $$(".xnode",wrap).forEach(g=>g.classList.remove("picked")); };
+  wrap.addEventListener("click",e=>{ const g=e.target.closest(".xnode"); if(g){ e.stopPropagation(); open(g.dataset.node); } else if(!e.target.closest(".xpop")) close(); });
+  wrap.addEventListener("keydown",e=>{ const g=e.target.closest(".xnode"); if(g&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); e.stopPropagation(); open(g.dataset.node); } if(e.key==="Escape"&&!pop.hidden){ e.stopPropagation(); close(); } });
+  if(X.pick) requestAnimationFrame(()=>{ if(document.body.contains(wrap)) open(X.pick); });
   return wrap;
 }
+const XROLE={user:"A normal customer's laptop. Its traffic is the baseline you compare attacks against.",
+  attacker:"The attacker's machine on the internet. Everything it sends is untrusted input.",
+  dns:"Turns names like shop.example into IP addresses. Also abused for tunnelling data out.",
+  waf:"The edge: TLS termination, routing and WAF rules. A safety net that inspects requests, not a fix for bugs.",
+  evil:"An attacker-controlled site: hosts payloads, receives stolen data, or acts as a C2 server.",
+  app:"The web application. Most vulnerabilities live here, in how it handles input.",
+  siem:"Collects logs and raises alerts. This is how defenders see an attack in progress.",
+  bucket:"Object storage. Private by default; leaks happen when policies make it public.",
+  db:"The database behind the app. The target of injection attacks.",
+  llm:"An LLM with tools. Text it reads can try to steer what those tools do.",
+  meta:"The cloud metadata service. It hands out the instance's role credentials, which is why SSRF here is so dangerous."};
 function sequenceView(){
   const nodes=[...involved()]; const order=Object.keys(XN).filter(k=>nodes.includes(k));
   const W=1000, colW=W/(order.length+0.5), rows=packetsOf(), rowH=34, H2=70+rows.length*rowH;

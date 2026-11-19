@@ -270,3 +270,104 @@ pi:{title:"Hidden instructions in a web page",
    k:"Understand how the model works and injection makes much more sense.",f:[["user","bot","ok"]],s:{bot:"ok"},m:{ask:"—",hidden:"—",act:"learn more"},l:2}
  ]}
 };
+
+/* ======================= "Try it" controls (live what-ifs) ======================= */
+(function(){
+const S=LESSON_SCENES;
+/* SQL injection: pick a payload, switch parameterised queries on/off */
+S.sqli.try=[
+ {id:"pl",type:"select",label:"Username",options:[["admin'--","admin'--"],["' OR 1=1--","' OR 1=1--"],["bob","bob (normal)"],["'; DROP TABLE users--","'; DROP TABLE users--"]]},
+ {id:"param",type:"toggle",label:"Parameterised query"}];
+const sqliRun=(pl,param)=>{
+  if(param) return pl==="bob"?{res:"checks bob's password",tone:"ok",row:"1 row if password matches"}:{res:"0 rows: login failed",tone:"ok",row:"0 rows"};
+  if(pl==="bob") return {res:"checks bob's password",tone:"ok",row:"normal query"};
+  if(pl==="admin'--") return {res:"logged in as admin",tone:"bad",row:"admin row"};
+  if(pl==="' OR 1=1--") return {res:"logged in as the first user (often admin)",tone:"bad",row:"every row"};
+  return {res:"users table dropped (if the driver allows stacked queries)",tone:"bad",row:"DROP runs"}; };
+S.sqli.try[1].apply=(param,i)=>{ if(i<2) return null; const pl=S.sqli.try[0]._v||"admin'--", r=sqliRun(pl,param);
+  const q=param?"username = ? ← \""+pl+"\"":"WHERE username='"+pl+"' AND password='…'";
+  const bad=r.tone==="bad";
+  return {f:[["att","form",bad?"bad":"req",pl],["form","app",bad?"bad":"req"],["app","db",bad?"bad":"ok",param?"bound as data":"SQL text"],["db","app",bad?"bad":"ok",r.row,{delay:.4}],["app","att",bad?"bad":"ok",bad?"welcome!":"login failed",{delay:.7}]],
+    s:{app:param?"ok":(bad?"bad":"focus"),db:bad?"bad":"ok",att:bad?"bad":""},b:{app:param?"prepared stmt":"string glue"},note:[450,150,q.slice(0,48)],
+    m:{in:pl,q:q,res:r.res},mt:{res:r.tone},
+    tryNote:param?"The database compiles the query first and receives `"+pl+"` as a plain value. Whatever it contains, it can't change the query.":(bad?"Your input became part of the SQL. Switch **Parameterised query** on and watch the same payload fail.":"A normal username works the same either way.")}; };
+S.sqli.try[0].apply=(v)=>{ S.sqli.try[0]._v=v; return null; };
+
+/* XSS: encode output, CSP, HttpOnly */
+S.xss.try=[{id:"enc",type:"toggle",label:"Encode output"},{id:"csp",type:"toggle",label:"CSP script-src 'self'"},{id:"ho",type:"toggle",label:"HttpOnly cookie"}];
+const X=S.xss.try; const xs={};
+X[0].apply=v=>{ xs.enc=v; return null; }; X[1].apply=v=>{ xs.csp=v; return null; };
+X[2].apply=(v,i)=>{ xs.ho=v; if(i<1||i>3) return null;
+  if(xs.enc) return {f:[["vic","site","req","GET /post/7"],["db","site","data","comment"],["site","vic","ok","shown as text",{delay:.4}]],s:{vic:"ok",evil:"dim",site:"ok"},b:{vic:"text, not code"},m:{render:"&lt;script&gt; (text)",res:"harmless"},mt:{render:"ok",res:"ok"},tryNote:"With output encoding the comment is displayed, not executed. This is the real fix."};
+  if(xs.csp) return {f:[["vic","site","req","GET /post/7"],["site","vic","warn","HTML + <script>",{delay:.3}],["vic","evil","bad","",{stop:.25,delay:.6}]],s:{vic:"warn",evil:"dim"},b:{vic:"CSP blocked inline script"},m:{render:"live HTML",res:"script blocked by CSP"},mt:{res:"ok",render:"warn"},tryNote:"The browser refuses to run the inline script because the CSP only allows scripts from the site's own files. The markup still got in, so encoding is still needed."};
+  if(xs.ho&&i===2) return {f:[["vic","evil","bad","",{stop:.3}],["vic","site","bad","POST /email"]],s:{vic:"bad",evil:"dim",site:"warn"},b:{vic:"can't read cookie"},m:{res:"no cookie theft, but actions as victim"},mt:{res:"warn"},tryNote:"HttpOnly hides the cookie from JavaScript, so it can't be sent to evil.test. The script still acts *as* the reader on this page."};
+  return null; };
+
+/* CSRF: SameSite + token */
+S.csrf.try=[{id:"ss",type:"select",label:"Session cookie SameSite",options:[["None","None"],["Lax","Lax"],["Strict","Strict"]]},{id:"tok",type:"toggle",label:"CSRF token on forms"}];
+const C=S.csrf.try; C[0].apply=v=>{ C._ss=v; return null; };
+C[1].apply=(tok,i)=>{ const ss=C._ss||"None"; if(i!==2&&i!==3) return null;
+  const sent=ss==="None"; const isGet=i===3;
+  if(!sent) return {f:[["evil","bank","bad",isGet?"<img src=…>":"POST (no cookie)"],["bank","chk","req"],["chk","evil","ok",isGet?"no session":"login page",{delay:.4}]],s:{bank:"ok",chk:"ok"},b:{bank:"no session cookie"},m:{from:"evil.test",ck:"no (SameSite="+ss+")",res:"rejected: not logged in"},mt:{ck:"ok",res:"ok"},tryNote:"With SameSite="+ss+" the browser doesn't attach the session cookie to this cross-site "+(isGet?"image request":"POST")+", so the bank sees an anonymous request."};
+  if(tok&&!isGet) return {f:[["evil","bank","bad","POST (no token)"],["bank","chk","req"],["chk","evil","ok","403",{delay:.4}]],s:{bank:"ok",chk:"ok"},b:{chk:"token missing"},m:{from:"evil.test",ck:"yes (SameSite=None)",res:"403: token missing"},mt:{ck:"warn",res:"ok"},tryNote:"The cookie was sent, but evil.test can't read the secret token in the bank's real form, so the forged request is rejected."};
+  if(tok&&isGet) return {s:{bank:"bad"},b:{bank:"GET skips token check"},m:{from:"evil.test (img)",ck:"yes (SameSite=None)",res:"email changed"},mt:{res:"bad"},tryNote:"Tokens are usually only checked on POST. A state-changing GET slips past them, which is why GET must never change state."};
+  return {tryNote:"SameSite=None and no token: nothing stops the forged request. Try **Lax** or turn on the token."}; };
+
+/* IDOR: choose an invoice, toggle the ownership check */
+const OWN={1040:"customer 3",1041:"you (customer 7)",1042:"customer 12",1043:"customer 5",1044:"customer 12",1045:"customer 9"};
+S.idor.try=[{id:"inv",type:"range",label:"Invoice ID",min:1040,max:1045,step:1,value:1042},{id:"chk",type:"toggle",label:"Ownership check"}];
+const I=S.idor.try; I[0].apply=v=>{ I._v=v; return null; };
+I[1].apply=(chk,i)=>{ if(i===3||i===0) return null; const id=I._v||1042, mine=id===1041;
+  if(mine) return {f:[["me","auth","req","GET /invoices/"+id],["auth","api","req"],["api","own","req"],["own","db","data",String(id)],["db","me","ok","your invoice",{delay:.5}]],s:{auth:"ok",own:"ok",db:"ok"},b:{own:"owner = you"},m:{url:"/invoices/"+id,owner:OWN[id],res:"200 (yours)"},mt:{res:"ok"},tryNote:"Your own invoice: allowed either way."};
+  if(chk) return {f:[["me","auth","bad","GET /invoices/"+id],["auth","api","req"],["api","own","req"],["own","me","ok","404 Not Found",{delay:.4}]],s:{own:"ok",db:"dim"},b:{own:"owner ≠ you"},m:{url:"/invoices/"+id,owner:OWN[id],res:"404"},mt:{res:"ok"},tryNote:"The API loads the invoice only if it belongs to the logged-in customer. Invoice "+id+" belongs to "+OWN[id]+", so you get 404."};
+  return {f:[["me","auth","bad","GET /invoices/"+id],["auth","api","req"],["api","db","data",String(id)],["db","me","bad",OWN[id]+"'s invoice",{delay:.4}]],s:{own:"dim",db:"bad"},b:{own:"skipped!"},m:{url:"/invoices/"+id,owner:OWN[id],res:"200 (not yours)"},mt:{res:"bad"},tryNote:"No ownership check: invoice "+id+" from "+OWN[id]+" comes straight back. Switch **Ownership check** on."}; };
+
+/* SSRF: pick a URL, toggle the network guard */
+const URLS={news:["https://news.example","web","public site"],imds:["http://169.254.169.254/latest/…","imds","link-local (metadata)"],admin:["http://10.0.4.12:8080/admin","admin","private 10.0.0.0/8"],dec:["http://2130706433/","admin","= 127.0.0.1 (loopback)"],redir:["https://evil.test/r → 169.254…","imds","redirect to link-local"]};
+S.ssrf.try=[{id:"u",type:"select",label:"URL to preview",options:[["imds","169.254.169.254 (metadata)"],["admin","10.0.4.12 admin"],["dec","2130706433 (decimal IP)"],["redir","redirect to metadata"],["news","news.example (normal)"]]},{id:"g",type:"toggle",label:"Resolve DNS, block private IPs, no redirects"}];
+const R=S.ssrf.try; R[0].apply=v=>{ R._u=v; return null; };
+R[1].apply=(g,i)=>{ if(i===1) return null; const k=R._u||"imds", [url,node,why]=URLS[k], pub=k==="news";
+  if(pub) return {f:[["att","app","req",url.slice(0,20)],["app","web","req"],["web","app","ok","preview",{delay:.4}]],s:{web:"ok"},m:{url,from:"server",res:"preview"},mt:{res:"ok"},tryNote:"A normal public URL works with or without the guard."};
+  if(g) return {f:[["att","app","bad",url.slice(0,20)],["app",node,"bad","",{stop:.2}],["app","att","ok","blocked",{delay:.3}]],s:{app:"ok",[node]:"dim"},b:{app:"blocked: "+why.split(" ")[0]},m:{url,from:"—",res:"400 blocked ("+why+")"},mt:{res:"ok"},tryNote:"The server resolves the destination first and sees it's "+why+", so it refuses. Redirects aren't followed, so the redirect trick fails too."};
+  return {f:[["att","app","bad",url.slice(0,20)],["app",node,"bad","GET"],[node,"app","data",node==="imds"?"credentials":"admin page",{delay:.4}],["app","att","bad","leaked",{delay:.7}]],s:{[node]:"bad",app:"bad"},m:{url,from:"server (inside)",res:node==="imds"?"role credentials":"internal admin page"},mt:{res:"bad"},tryNote:"Without the guard the server happily fetches "+why+". Switch the guard on."}; };
+
+/* JWT: token vs server check */
+S.jwt.try=[{id:"t",type:"select",label:"Token sent",options:[["guest","original (role: guest)"],["edit","edited: role admin, old signature"],["none","alg: none, role admin"]]},{id:"srv",type:"select",label:"Server check",options:[["trust","verify, trusts token's alg"],["pin","verify, alg pinned to HS256"],["decode","decode() only"]]}];
+const J=S.jwt.try; J[0].apply=v=>{ J._t=v; return null; };
+J[1].apply=(srv,i)=>{ if(i===0) return null; const t=J._t||"guest";
+  const admin=t!=="guest"; let ok;
+  if(t==="guest") ok=true; else if(srv==="decode") ok=false; else if(srv==="pin") ok=true; else ok=t==="edit";
+  const accepted=t==="guest"||!ok;
+  const res=t==="guest"?"200 as guest":ok?"401 rejected":"200 as ADMIN";
+  return {f:[["cl","tok",admin?"bad":"req",t==="none"?"alg: none":admin?"role: admin":"role: guest"],["tok","ver",admin?"bad":"req","",accepted?{}:{stop:.85}]].concat(accepted?[["ver","api",admin?"bad":"ok",admin?"admin!":"guest"]]:[]),
+    s:{ver:ok?"ok":"bad",api:admin&&!ok?"bad":""},b:{ver:srv==="pin"?"HS256 only":srv==="decode"?"no signature check":"uses header alg"},m:{hdr:t==="none"?"{alg: none}":"{alg: HS256}",pl:admin?"{role: admin}":"{role: guest}",res},mt:{res:ok?"ok":"bad"},
+    tryNote:t==="guest"?"A genuine token passes every check.":srv==="decode"?"`decode()` just reads the payload. Nothing is verified, so any edit works.":t==="none"&&srv==="trust"?"The library let the token choose `none`, so it skipped the signature. Pin the algorithm.":"The signature doesn't match the edited payload (or `none` isn't allowed), so the token is rejected."}; };
+
+/* S3 */
+S.s3.try=[{id:"bpa",type:"toggle",label:"Block Public Access"}];
+S.s3.try[0].apply=(v,i)=>{ if(!v||i===3) return null;
+  if(i===0) return {f:[["site","pol","req","via CloudFront"],["pol","bkt","ok","OAC only"],["bkt","site","ok","image",{delay:.4}]],s:{pol:"ok",bkt:"ok"},b:{pol:"CDN-only access"},m:{req:"GetObject logo.png (via CDN)",auth:"CloudFront OAC",res:"200"},tryNote:"Images still load, but only through CloudFront. The bucket itself is no longer public."};
+  return {f:[["att","pol","bad",i===1?"ListBucket":"GET backups/…"],["pol","att","ok","403",{delay:.3}]],s:{pol:"ok",bak:"dim"},b:{pol:"public access blocked"},m:{req:i===1?"ListBucket":"GetObject backups/…",auth:"none",res:"403 AccessDenied"},mt:{res:"ok"},tryNote:"Block Public Access overrides the public bucket policy. Anonymous requests get 403."}; };
+
+/* IMDS */
+S.imds.try=[{id:"v",type:"select",label:"Instance metadata",options:[["v1","IMDSv1 allowed"],["v2","IMDSv2 required"]]}];
+S.imds.try[0].apply=(v,i)=>{ if(v!=="v2"||i===0||i===4) return null;
+  return {f:[["att","ec2","bad","?url=169.254…"],["ec2","imds","bad","GET (no token)"],["imds","ec2","ok","401",{delay:.4}]],s:{imds:"ok",aws:"dim",gd:"dim"},b:{imds:"token required"},m:{ver:"v2 required",creds:"safe",res:"401 Unauthorized"},mt:{res:"ok",creds:"ok"},tryNote:"IMDSv2 needs a session token from a PUT request first. The SSRF can only send a GET, so it gets 401 and there are no credentials to steal."}; };
+
+/* Kerberoasting */
+S.ad.try=[{id:"pw",type:"select",label:"svc_sql password",options:[["weak","Summer2019!"],["long","25 random characters"],["gmsa","gMSA (managed, 120 chars)"]]},{id:"enc",type:"select",label:"Ticket encryption",options:[["rc4","RC4 allowed"],["aes","AES only"]]}];
+const K=S.ad.try; K[0].apply=v=>{ K._pw=v; return null; };
+K[1].apply=(enc,i)=>{ if(i!==2&&i!==3) return null; const pw=K._pw||"weak", weak=pw==="weak";
+  const t=weak?(enc==="rc4"?"minutes":"hours (still cracked)"):"longer than the universe";
+  if(i===2) return {s:{rig:weak?"bad":"ok"},b:{rig:weak?"cracked in "+(enc==="rc4"?"minutes":"hours"):"no luck"},m:{step:"offline cracking",enc:enc==="rc4"?"RC4":"AES",res:weak?"password recovered":"uncrackable"},mt:{res:weak?"bad":"ok"},tryNote:"Estimated cracking time: **"+t+"**. "+(weak?"AES makes each guess slower, but a dictionary password still falls.":"A long random or managed password defeats offline cracking no matter how many GPUs.")};
+  if(!weak) return {f:[["user","svc","bad","",{stop:.3}]],s:{svc:"ok"},b:{svc:"password unknown"},m:{step:"lateral movement",res:"blocked: no password"},mt:{res:"ok"},tryNote:"No cracked password, no login as svc_sql."};
+  return null; };
+
+/* Prompt injection */
+S.pi.try=[{id:"tool",type:"toggle",label:"Assistant has send_email",value:true},{id:"appr",type:"toggle",label:"Human approval for sending"}];
+const P=S.pi.try; P[0].apply=v=>{ P._tool=v; return null; };
+P[1].apply=(appr,i)=>{ if(i!==2) return null; const tool=P._tool!==false;
+  if(!tool) return {f:[["bot","tool","bad","",{stop:.3}]],s:{tool:"dim",bot:"warn"},b:{bot:"no such tool"},m:{act:"nothing to call"},mt:{act:"ok"},tryNote:"A summariser doesn't need email. Without the tool, the injection can only spoil the summary."};
+  if(appr) return {f:[["bot","tool","bad","send_email"],["tool","user","ok","approve?",{delay:.4}]],s:{tool:"ok"},b:{tool:"waiting for you"},m:{act:"held for approval"},mt:{act:"ok"},tryNote:"The call is shown to the user first. They see an email to collector@evil.test and decline."};
+  return null; };
+})();
