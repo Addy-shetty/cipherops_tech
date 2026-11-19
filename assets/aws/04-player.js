@@ -58,8 +58,8 @@ const WALK=(()=>{
           sv("path",{d:right,fill:shade(c,-.32),stroke:"#1B2A4A","stroke-width":"1.6","stroke-linejoin":"round",class:"wr"}),
           sv("path",{d:top,fill:shade(c,.55),stroke:"#1B2A4A","stroke-width":"1.6","stroke-linejoin":"round",class:"wt"}),
           sv("text",{x,y:y-h+4,"text-anchor":"middle",class:"wglyph"},n.glyph||"")); }
-      g.append(sv("text",{x:n.x,y:n.y+(n.kind==="user"?22:(KIND[n.kind||"block"].w/2+20)),"text-anchor":"middle",class:"wlabel"},n.label),
-        n.sub?sv("text",{x:n.x,y:n.y+(n.kind==="user"?36:(KIND[n.kind||"block"].w/2+34)),"text-anchor":"middle",class:"wsub"},n.sub):null);
+      g.append(...[sv("text",{x:n.x,y:n.y+(n.kind==="user"?22:(KIND[n.kind||"block"].w/2+20)),"text-anchor":"middle",class:"wlabel"},n.label),
+        n.sub?sv("text",{x:n.x,y:n.y+(n.kind==="user"?36:(KIND[n.kind||"block"].w/2+34)),"text-anchor":"middle",class:"wsub"},n.sub):null].filter(Boolean));
       gNodes.append(g); nodeEls[n.id]={g,n,c}; });
 
     { const xs=scene.nodes.map(n=>n.x), ys=scene.nodes.map(n=>n.y); (scene.zones||[]).forEach(z=>{ xs.push(z.x,z.x+z.w); ys.push(z.y,z.y+z.h+20); });
