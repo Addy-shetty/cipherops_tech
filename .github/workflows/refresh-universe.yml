@@ -1,0 +1,66 @@
+name: Refresh Bounty Universe data
+
+# Rebuilds assets/universe/programs.json from public program datasets once a day.
+# A commit to main triggers the normal Vercel deploy.
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 03:17 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-universe
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch source datasets
+        run: |
+          mkdir -p /tmp/src && cd /tmp/src
+          git clone --depth 1 https://github.com/arkadiyt/bounty-targets-data.git btd
+          git clone --depth 1 https://github.com/infosec-us-team/Immunefi-Bug-Bounty-Programs-Unofficial.git imm
+          git clone --depth 1 https://github.com/disclose/diodb.git diodb
+          git clone --depth 1 https://github.com/projectdiscovery/public-bugbounty-programs.git pd
+
+      - name: Build programs.json
+        run: |
+          python scripts/build_universe.py \
+            /tmp/src/btd/data /tmp/src/imm \
+            /tmp/src/diodb/program-list.json \
+            /tmp/src/pd/dist/data.json \
+            /tmp/programs.json
+          # sanity check: refuse to publish a suspiciously small dataset
+          python - <<'PY'
+          import json, sys
+          d = json.load(open("/tmp/programs.json"))
+          n = len(d["programs"])
+          print("programs:", n)
+          if n <= 2000: sys.exit("too few programs, not publishing")
+          # only replace the file when the programs actually changed (ignore the date stamp)
+          old = json.load(open("assets/universe/programs.json"))
+          if old["programs"] == d["programs"]:
+              print("No data change"); sys.exit(0)
+          import shutil; shutil.copy("/tmp/programs.json", "assets/universe/programs.json")
+          PY
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- assets/universe/programs.json; then
+            echo "No change"; exit 0
+          fi
+          git config user.name "cipherops-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/universe/programs.json
+          git commit -m "data: refresh Bounty Universe programs ($(date -u +%F))"
+          git push

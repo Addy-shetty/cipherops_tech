@@ -12,8 +12,18 @@ writing. Every lab, server and payload response on the site is simulated in the 
 - **PayloadsAllTheThings** (MIT) and **SecLists** (MIT) — linked. If you import their content, include their MIT licence notices.
 - **GTFOBins**, **OWASP ZAP**, **Frida**, **Kubernetes** and **AWS** documentation — linked.
 
+## Bounty Universe data and code
+- **bounty-targets-data** by Arkadiy Tetelman (MIT) — HackerOne, Bugcrowd, Intigriti and YesWeHack program scopes. https://github.com/arkadiyt/bounty-targets-data
+- **disclose.io diodb** (CC0-1.0) — program list and safe-harbor flags. https://github.com/disclose/diodb
+- **ProjectDiscovery public-bugbounty-programs** (MIT) — root domains for self-hosted programs. https://github.com/projectdiscovery/public-bugbounty-programs
+- **Immunefi programs (unofficial mirror)** by infosec-us-team — factual listing data for Web3 programs; the repository has no licence file. https://github.com/infosec-us-team/Immunefi-Bug-Bounty-Programs-Unofficial
+- **0DIN** (Mozilla) and **huntr** (Protect AI) — short scope summaries written for this site, linking to https://0din.ai/scope and https://huntr.com/bounties.
+- **three.js** r128 (MIT, © three.js authors) — vendored in `assets/universe/three.min.js`.
+
+Program listings come from community datasets and can be out of date. A listing is not permission to test: the live policy on each program's page is the source of truth.
+
 ## Fonts
 Barlow, Barlow Semi Condensed (SIL Open Font License 1.1) and JetBrains Mono (SIL OFL 1.1), served by Google Fonts.
 
 ## Not affiliated
-cipherops_tech is not affiliated with or endorsed by OWASP, MITRE, PortSwigger, HackTricks, Hacking Articles, Hack The Box or TryHackMe.
+cipherops_tech is not affiliated with or endorsed by HackerOne, Bugcrowd, Intigriti, YesWeHack, Immunefi, HackenProof, Mozilla, Protect AI, OWASP, MITRE, PortSwigger, HackTricks, Hacking Articles, Hack The Box or TryHackMe.

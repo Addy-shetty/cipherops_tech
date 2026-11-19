@@ -11,6 +11,11 @@ red team and LLM security, from basic to advanced.
 - **Labs**: 12 CTF-style challenges with flags, points, hints and ranks. All are simulated in the browser.
 - **Placement test**: 12 questions that recommend a learning path.
 - **Flashcards**: spaced repetition with Leitner boxes, built from lessons, ports and HTTP status codes.
+- **Bounty Universe** (`/universe`): 3,400+ public bug bounty and disclosure programs as a 3D
+  universe (three.js), with Bubble chart and List views. Filter by track (Web, API, Mobile, Web3,
+  AI security, Hardware & IoT…), reward type, safe harbor and platform. Each program shows its full
+  in-scope and out-of-scope lists by asset type, and scopes can be downloaded as .txt, .json, .csv
+  or a .zip with one file per program. Data refreshes daily (see below).
 - **Learning paths**, **cheat sheets**, **search** (press `/` or Ctrl+K) and a light/dark theme.
 
 It's a static site with no build step, no framework and no backend. Progress is saved in the
@@ -76,3 +81,21 @@ vercel.json             headers & clean URLs
 Bump the `?v=` number on the CSS and JS links in `index.html` when you change assets.
 
 See `NOTICE.md` for attribution and licensing of referenced material.
+
+## Bounty Universe data
+`assets/universe/programs.json` is built by `scripts/build_universe.py` from public datasets and
+refreshed daily by `.github/workflows/refresh-universe.yml` (03:17 UTC). The workflow only commits
+when the programs actually change, and refuses to publish if the dataset looks too small.
+Run it by hand from the repo's **Actions** tab → *Refresh Bounty Universe data* → *Run workflow*.
+
+To rebuild locally:
+```bash
+mkdir -p /tmp/src && cd /tmp/src
+git clone --depth 1 https://github.com/arkadiyt/bounty-targets-data.git btd
+git clone --depth 1 https://github.com/infosec-us-team/Immunefi-Bug-Bounty-Programs-Unofficial.git imm
+git clone --depth 1 https://github.com/disclose/diodb.git diodb
+git clone --depth 1 https://github.com/projectdiscovery/public-bugbounty-programs.git pd
+cd -
+python3 scripts/build_universe.py /tmp/src/btd/data /tmp/src/imm /tmp/src/diodb/program-list.json /tmp/src/pd/dist/data.json assets/universe/programs.json
+```
+three.js r128 is vendored at `assets/universe/three.min.js` so the strict `script-src 'self'` CSP still holds.

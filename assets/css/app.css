@@ -473,3 +473,4 @@ html[data-theme="dark"] .gcard{background:var(--paper-2)}
 .fc-rate .btn{flex-direction:column;gap:2px;justify-content:center}
 .fc-rate small{font:500 11px var(--f-mono);opacity:.75}
 .fc > .btn{justify-self:start}
+nav.tabs a.nav-new{color:var(--teal);font-weight:600}
