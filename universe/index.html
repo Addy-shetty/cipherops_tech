@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bounty Universe — find your first bug bounty program · cipherops_tech</title>
 <meta name="theme-color" content="#060A16">
-<meta name="description" content="Explore 3,400+ public bug bounty and disclosure programs as a 3D universe. Filter by Web, Mobile, API, Web3 and AI security, see full in-scope and out-of-scope lists, and download scopes for recon.">
+<meta name="description" content="Explore 2,800+ public bug bounty and disclosure programs as a 3D universe. Filter by Web, Mobile, API, Cloud, Web3 and AI security, see full in-scope and out-of-scope lists, and download scopes for recon.">
 <link rel="canonical" href="https://cipherops-tech.vercel.app/universe">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="cipherops_tech">
 <meta property="og:title" content="Bounty Universe — cipherops_tech">
-<meta property="og:description" content="3,400+ public bug bounty programs as a 3D universe, with typed scopes, Web3 and AI-security tracks, and scope downloads.">
+<meta property="og:description" content="2,800+ public bug bounty programs as a 3D universe, with typed scopes, Cloud, Web3 and AI-security tracks, and scope downloads.">
 <meta property="og:url" content="https://cipherops-tech.vercel.app/universe">
 <meta property="og:image" content="https://cipherops-tech.vercel.app/assets/universe/og-universe.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
@@ -21,8 +21,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="preload" href="/assets/universe/programs.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/universe/universe.css?v=1">
+<link rel="preload" href="/assets/universe/programs.json?v=2" as="fetch" crossorigin>
+<link rel="stylesheet" href="/assets/universe/universe.css?v=2">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -38,7 +38,7 @@
     <div class="count" id="count" aria-live="polite"></div>
   </header>
   <main class="stage" id="stage">
-    <div class="loading" id="loading" role="status">Loading 3,400+ programs…</div>
+    <div class="loading" id="loading" role="status">Loading programs…</div>
     <canvas id="gl" aria-label="3D map of public bug bounty and disclosure programs. Use the List view for an accessible table."></canvas>
     <canvas id="bubble" style="display:none" aria-label="Bubble chart of programs by beginner score and scope size"></canvas>
     <div class="labels" id="labels"></div>
@@ -71,7 +71,7 @@
   </main>
   <footer class="foot">
     <span id="snap"></span>
-    <span>Data: <a href="https://github.com/arkadiyt/bounty-targets-data" target="_blank" rel="noopener">bounty-targets-data</a> (MIT) · <a href="https://github.com/infosec-us-team/Immunefi-Bug-Bounty-Programs-Unofficial" target="_blank" rel="noopener">Immunefi mirror</a> · <a href="https://github.com/disclose/diodb" target="_blank" rel="noopener">diodb</a> (CC0) · <a href="https://github.com/projectdiscovery/public-bugbounty-programs" target="_blank" rel="noopener">ProjectDiscovery</a> (MIT) · <a href="https://0din.ai/scope" target="_blank" rel="noopener">0DIN</a> · <a href="https://huntr.com/bounties" target="_blank" rel="noopener">huntr</a></span>
+    <span>Data: <a href="https://github.com/arkadiyt/bounty-targets-data" target="_blank" rel="noopener">bounty-targets-data</a> (MIT) · <a href="https://github.com/infosec-us-team/Immunefi-Bug-Bounty-Programs-Unofficial" target="_blank" rel="noopener">Immunefi mirror</a> · <a href="https://github.com/disclose/diodb" target="_blank" rel="noopener">diodb</a> (CC0) · <a href="https://github.com/projectdiscovery/public-bugbounty-programs" target="_blank" rel="noopener">ProjectDiscovery</a> (MIT) · <a href="https://0din.ai/scope" target="_blank" rel="noopener">0DIN</a> · <a href="https://huntr.com/bounties" target="_blank" rel="noopener">huntr</a> · <a href="https://www.microsoft.com/en-us/msrc/bounty-microsoft-azure" target="_blank" rel="noopener">MSRC Azure</a> · <a href="https://bughunters.google.com/about/rules/4849867320328192/cloud-vulnerability-reward-program-rules" target="_blank" rel="noopener">Google Cloud VRP</a></span>
     <span>Listing ≠ permission. Always read the live policy before testing.</span>
   </footer>
 </div>
@@ -93,6 +93,6 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="/assets/universe/three.min.js?v=r128" defer></script>
-<script src="/assets/universe/universe.js?v=1" defer></script>
+<script src="/assets/universe/universe.js?v=2" defer></script>
 </body>
 </html>

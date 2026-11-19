@@ -11,8 +11,8 @@ red team and LLM security, from basic to advanced.
 - **Labs**: 12 CTF-style challenges with flags, points, hints and ranks. All are simulated in the browser.
 - **Placement test**: 12 questions that recommend a learning path.
 - **Flashcards**: spaced repetition with Leitner boxes, built from lessons, ports and HTTP status codes.
-- **Bounty Universe** (`/universe`): 3,400+ public bug bounty and disclosure programs as a 3D
-  universe (three.js), with Bubble chart and List views. Filter by track (Web, API, Mobile, Web3,
+- **Bounty Universe** (`/universe`): 2,800+ public bug bounty and disclosure programs as a 3D
+  universe (three.js), with Bubble chart and List views. Filter by track (Web, API, Mobile, Cloud, Web3,
   AI security, Hardware & IoT…), reward type, safe harbor and platform. Each program shows its full
   in-scope and out-of-scope lists by asset type, and scopes can be downloaded as .txt, .json, .csv
   or a .zip with one file per program. Data refreshes daily (see below).

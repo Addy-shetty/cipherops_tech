@@ -4,7 +4,8 @@ function bootUniverse(RAW){
 const P=RAW.programs;
 const KIND={W:{n:"Wildcards",s:"wildcard"},R:{n:"Root domains",s:"root domain"},U:{n:"Web apps & URLs",s:"web"},A:{n:"APIs",s:"api"},M:{n:"Android apps",s:"android"},I:{n:"iOS apps",s:"ios"},S:{n:"Smart contracts",s:"smart contract"},B:{n:"Blockchain / DLT",s:"blockchain"},L:{n:"AI models & features",s:"ai"},C:{n:"Source code",s:"code"},N:{n:"IPs & CIDRs",s:"network"},H:{n:"Hardware & IoT",s:"hardware"},E:{n:"Desktop & executables",s:"executable"},O:{n:"Other",s:"other"}};
 const KORDER="WRUALSBMICNHEO";
-const TRACK={w:{n:"Web",c:"#60A5FA"},a:{n:"API",c:"#22D3EE"},m:{n:"Mobile",c:"#34D399"},"3":{n:"Web3",c:"#C084FC"},i:{n:"AI security",c:"#F472B6"},h:{n:"Hardware & IoT",c:"#FB923C"},n:{n:"Network",c:"#94A3B8"},c:{n:"Source code",c:"#FACC15"}};
+const LEARN={k:[["shared","Shared responsibility"],["iam","IAM misconfigurations"],["s3","S3 & storage exposure"],["imds","Instance metadata"]],i:[["llmapps","How LLM apps work"],["pi","Prompt injection"],["llmrt","Red-teaming an LLM app"]],m:[["mobbasics","How mobile apps are packaged"],["components","Exported components"]],a:[["idor","Authentication & IDOR"],["jwt","JWT attacks"]],w:[["owasp","OWASP Top 10 tour"],["recon","Reconnaissance"]]};
+const TRACK={w:{n:"Web",c:"#60A5FA"},a:{n:"API",c:"#22D3EE"},m:{n:"Mobile",c:"#34D399"},"3":{n:"Web3",c:"#C084FC"},i:{n:"AI security",c:"#F472B6"},k:{n:"Cloud",c:"#A3E635"},h:{n:"Hardware & IoT",c:"#FB923C"},n:{n:"Network",c:"#94A3B8"},c:{n:"Source code",c:"#FACC15"}};
 const hostOf=t=>{ t=String(t).trim().toLowerCase(); if(/\s/.test(t)) return ""; t=t.replace(/^[a-z]+:\/\//,"").replace(/[\/?#].*$/,"").replace(/:\d+$/,""); return /^(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(t)&&!/^\d+(\.\d+){3}$/.test(t)?t:""; };
 P.forEach(p=>{ p.items=(p.sc||[]).map(e=>{ const a=e.split("|"); return {k:a[0],t:a[1],d:a[2]||""}; });
   p.out=(p.oos||[]).map(e=>{ const a=e.split("|"); return {k:a[0],t:a[1]}; }); p.oc=p.oc||0;
@@ -67,8 +68,11 @@ function openCard(i){
       p.mx?el("dt",{},"Max reward"):null, p.mx?el("dd",{className:"mono"},"$"+Number(p.mx).toLocaleString()):null,
       p.tags&&p.tags.length?el("dt",{},"Project"):null, p.tags&&p.tags.length?el("dd",{},p.tags.join(" · ")):null,
       p.aiw?el("dt",{},"AI in scope"):null, p.aiw?el("dd",{},el("code",{className:"aiw"},p.aiw)):null,
+      p.clw?el("dt",{},p.cprov?"Cloud provider":"Cloud in scope"):null, p.clw?el("dd",{},p.cprov?"Yes, this company runs cloud infrastructure":el("code",{className:"clw"},p.clw)):null,
       p.note?el("dt",{},"Focus"):null, p.note?el("dd",{},p.note):null),
+    p.cat.includes("k")?el("div",{className:"cloudwarn"},el("b",{},"Cloud rule: "),"only test assets this company owns. Customer buckets, VMs and apps hosted on a cloud provider belong to the customer, and testing them is out of scope and breaks the provider's terms."):null,
     scopeView(p),
+    learnBox(p),
     scopeBox(p),
     el("p",{style:"font-size:12.5px;color:var(--text-3);margin:4px 0 0"},"Details come from community datasets and can be out of date. The live policy is the source of truth."),
     el("div",{className:"warn"},"Before you test: read the live policy, stay strictly in scope, use your own test accounts, and stop at proof of concept."),
@@ -92,6 +96,9 @@ function scopeView(p){
   groups.forEach(k=>tabs.append(el("button",{role:"tab","data-k":k,onclick:()=>show(k)},KIND[k].n,el("small",{},String(p.kc[k])))));
   if(p.oc) tabs.append(el("button",{role:"tab","data-k":"X",className:"oos",onclick:()=>show("X")},"Out of scope",el("small",{},String(p.oc))));
   box.append(el("div",{className:"f-h"},"Scope ",el("span",{className:"mono"},p.d.toLocaleString()+" in"+(p.oc?" · "+p.oc+" out":""))),tabs,body); show(cur); return box; }
+function learnBox(p){ const seen=new Set(), items=[]; for(const c of "kimaw"){ if(!p.cat.includes(c)||!LEARN[c]) continue; for(const l of LEARN[c]){ if(!seen.has(l[0])&&items.length<4){ seen.add(l[0]); items.push(l); } } }
+  items.push(["report","Writing a great report"]);
+  return el("div",{className:"learn"},el("div",{className:"f-h"},"Learn before you hunt"),el("div",{className:"row"},items.map(([id,t])=>el("a",{className:"btn sm",href:"/#"+id},t+" →")))); }
 function closeCard(){ selected=-1; $("#card").classList.remove("on"); if(U) U.select(-1); }
 
 /* ---------- search ---------- */
@@ -402,6 +409,7 @@ function buildDlMenu(){ const m=$("#dlMenu"); m.innerHTML=""; const ps=filtered(
       files.push(["README.txt","Bounty Universe scope export, "+STAMP()+"\nSources: "+RAW.sources.map(s=>s.name+" ("+s.license+")").join("; ")+"\nListing is not permission. Read each program's live policy before testing.\n"]); saveFile(base+".zip",makeZip(files)); },!withD.length),
     it("Web3: smart contracts & chains",contracts.length.toLocaleString()+" · .csv",()=>saveFile(base+"-web3.csv",csvOf([["program","type","target","note","policy"],...contracts]),"text/csv"),!contracts.length),
     it("AI security targets",ai.length.toLocaleString()+" · .csv",()=>saveFile(base+"-ai.csv",csvOf([["program","ai_target","policy"],...ai]),"text/csv"),!ai.length),
+    it("Cloud targets",ps.filter(p=>p.cat.includes("k")).length+" programs · .csv",()=>saveFile(base+"-cloud.csv",csvOf([["program","platform","cloud_provider","cloud_asset","policy"],...ps.filter(p=>p.cat.includes("k")).map(p=>[p.n,PLAT[p.p].n,p.cprov?"yes":"no",p.cprov?"":p.clw,p.u])]),"text/csv"),!ps.some(p=>p.cat.includes("k"))),
     it("Programs, full JSON",ps.length+" programs · .json",()=>saveFile(base+".json",JSON.stringify({generated:STAMP(),sources:RAW.sources,programs:ps.map(chaosObj)})+"\n","application/json")),
     it("Programs table",ps.length+" rows · .csv",()=>saveFile(base+".csv",csvOf([["name","platform","tracks","type","safe_harbor","beginner_score","max_reward","in_scope","out_of_scope","policy_url"],...ps.map(p=>[p.n,PLAT[p.p].n,[...p.cat].map(c=>TRACK[c]&&TRACK[c].n).filter(Boolean).join(" "),TYPE[p.b].n,SHN[p.sh],p.s,p.mx||"",p.d,p.oc,p.u])]),"text/csv")));
 }
@@ -419,6 +427,6 @@ if(!U) setView("list");
 window.__BU={makeZip,buildDlMenu,scopeTxt,P,F,openCard,setView,applyFilters,startHere,get U(){return U;}};
 }
 
-fetch("/assets/universe/programs.json",{cache:"default"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+fetch("/assets/universe/programs.json?v=2",{cache:"default"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
   .then(RAW=>{ document.getElementById("loading").hidden=true; bootUniverse(RAW); })
-  .catch(err=>{ console.error(err); const l=document.getElementById("loading"); l.textContent="Couldn't load the program data. Please refresh."; });
+  .catch(err=>{ console.error(err); document.getElementById("loading").textContent="Couldn't load the program data. Please refresh."; });

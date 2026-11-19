@@ -50,6 +50,21 @@ def is_ai(*texts):
         if AI_LOOSE.search(s[:600]): return True
     return False
 
+CLOUD_HOST=re.compile(r'(amazonaws\.com|aws\.amazon\.com|cloudfront\.net|\bazure\.(?:com|net)|azurewebsites\.net|\.windows\.net|azurecr\.io|azure-api\.net|cloud\.google\.com|googleapis\.com|appspot\.com|\.run\.app|cloudfunctions\.net|firebaseio\.com|firebaseapp\.com|digitaloceanspaces\.com|ondigitalocean\.app|herokuapp\.com|oraclecloud\.com|aliyuncs\.com|alibabacloud\.com|aliyun\.com|cloud\.ibm\.com|ibm\.cloud|\.r2\.dev|workers\.dev|pages\.dev|vercel\.app|netlify\.app|cloud\.mongodb\.com|supabase\.co)',re.I)
+CLOUD_TXT=re.compile(r'\b(aws accounts?|s3 buckets?|aws (?:lambda|ec2|iam|console)|azure (?:subscriptions?|tenants?|ad|functions|portal)|entra id|gcp projects?|google cloud|kubernetes|k8s|eks|aks|gke|openshift|terraform|cloud infrastructure|cloud console|container registry|serverless|iaas|paas)\b',re.I)
+CLOUD_PROV=re.compile(r'^(aws vdp|amazon web services|alibaba vdp|microsoft \(online services\)|cloudflare( public bug bounty)?|fastly vdp|digitalocean|cloudways by digitalocean|exoscale( bug bounty)?|backblaze|databricks|elastic|cloud\.elastic\.co|heroku|ibm|kubernetes|mongodb|nutanix|ovh|oracle|openstack|rackspace|red hat|render|supabase|tencent bug bounty program|vercel|vmware|vultr|docker|clever-cloud\.com|linode|akamai|hetzner|scaleway|netlify|fly\.io|hashicorp|snowflake|wasabi)$',re.I)
+TLDISH=set('com co net org ac gov edu mil int io ai app dev cloud biz info me tv cc ws cat off'.split())
+def brand(name):
+    n=(name or '').strip().lower()
+    if not re.fullmatch(r'[a-z0-9-]+(\.[a-z0-9-]+)+',n): return None
+    labs=n.split('.')
+    while len(labs)>1 and (labs[-1] in TLDISH or len(labs[-1])==2): labs.pop()
+    return labs[-1]
+def mark_cloud(q,target,desc=''):
+    t=str(target or ''); d=str(desc or '')
+    if CLOUD_HOST.search(t) or CLOUD_TXT.search(t[:200]) or CLOUD_TXT.search(d[:600]):
+        q['cloud']=True; q.setdefault('clw',clip(t,60))
+
 progs={}   # key -> program
 def add(key,p):
     if key in progs: return progs[key]
@@ -71,21 +86,21 @@ for p in json.load(open(BTD+'/hackerone_data.json')):
     if p.get('submission_state')!='open': continue
     q=add(norm(p['name']),base(p['name'],p['url'],'hackerone',1 if p.get('offers_bounties') else 0)); q['src']+='b'; q['sw']=bool(p.get('offers_swag'))
     for t in p['targets']['in_scope']:
-        k=tnorm(t['asset_type'],t['asset_identifier']); scope_add(q,k,t['asset_identifier'])
+        k=tnorm(t['asset_type'],t['asset_identifier']); scope_add(q,k,t['asset_identifier']); mark_cloud(q,t['asset_identifier'],t.get('instruction'))
         if k=='L' or is_ai(t['asset_identifier'],t.get('instruction')): q['ai']=True; q.setdefault('aiw',clip(t['asset_identifier'],60))
     for t in p['targets']['out_of_scope']: oos_add(q,tnorm(t['asset_type'],t['asset_identifier']),t['asset_identifier'])
 for p in json.load(open(BTD+'/bugcrowd_data.json')):
     q=add(norm(p['name']),base(p['name'],p['url'],'bugcrowd',1 if (p.get('max_payout') or 0)>0 else 0)); q['src']+='b'
     q['sh']={'full':2,'partial':1}.get(p.get('safe_harbor'),-1); q['mx']=p.get('max_payout') or 0
     for t in p['targets']['in_scope']:
-        k=tnorm(t.get('type'),t.get('target')); scope_add(q,k,t.get('target') or t.get('name'), t.get('name') if t.get('name')!=t.get('target') else '')
+        k=tnorm(t.get('type'),t.get('target')); scope_add(q,k,t.get('target') or t.get('name'), t.get('name') if t.get('name')!=t.get('target') else ''); mark_cloud(q,t.get('target') or t.get('name'),t.get('name'))
         if is_ai(t.get('target'),t.get('name')): q['ai']=True; q.setdefault('aiw',clip(t.get('name') or t.get('target'),60))
     for t in p['targets']['out_of_scope']: oos_add(q,tnorm(t.get('type'),t.get('target')),t.get('target') or t.get('name'))
 for p in json.load(open(BTD+'/intigriti_data.json')):
     mx=(p.get('max_bounty') or {}).get('value',0) or 0
     q=add(norm(p['name']),base(p['name'],p['url'],'intigriti',1 if mx>0 else 0)); q['src']+='b'; q['mx']=mx
     for t in p['targets']['in_scope']:
-        k=tnorm(t.get('type'),t.get('endpoint')); scope_add(q,k,t.get('endpoint'))
+        k=tnorm(t.get('type'),t.get('endpoint')); scope_add(q,k,t.get('endpoint')); mark_cloud(q,t.get('endpoint'),t.get('description'))
         if is_ai(t.get('endpoint'),t.get('description')): q['ai']=True; q.setdefault('aiw',clip(t.get('endpoint'),60))
     for t in p['targets']['out_of_scope']: oos_add(q,tnorm(t.get('type'),t.get('endpoint')),t.get('endpoint'))
 for p in json.load(open(BTD+'/yeswehack_data.json')):
@@ -93,7 +108,7 @@ for p in json.load(open(BTD+'/yeswehack_data.json')):
     mx=p.get('max_bounty') or 0
     q=add(norm(p['name']),base(p['name'],'https://yeswehack.com/programs/'+p['id'],'yeswehack',1 if mx>0 else 0)); q['src']+='b'; q['mx']=mx
     for t in p['targets']['in_scope']:
-        k=tnorm(t.get('type'),t.get('target')); scope_add(q,k,t.get('target'))
+        k=tnorm(t.get('type'),t.get('target')); scope_add(q,k,t.get('target')); mark_cloud(q,t.get('target'))
         if is_ai(t.get('target')): q['ai']=True; q.setdefault('aiw',clip(t.get('target'),60))
     for t in p['targets']['out_of_scope']: oos_add(q,tnorm(t.get('type'),t.get('target')),t.get('target'))
 
@@ -113,6 +128,7 @@ for p in json.load(open(IMM+'/projects.json')):
     if is_ai(p['project']): q['ai']=True
 
 # 3) diodb (self-hosted + safe-harbor enrichment)
+seen_brands=set(); dup_hosts=[0]
 for p in json.load(open(DIODB)):
     if p.get('policy_url_status')!='alive': continue
     name=p.get('program_name') or ''; k=norm(name)
@@ -124,6 +140,9 @@ for p in json.load(open(DIODB)):
         continue
     pl=platform(p.get('policy_url'))
     if pl in ('hackerone','bugcrowd','intigriti','yeswehack','immunefi'): continue  # platform program no longer public/open in live data
+    b_=brand(name)
+    if b_ and (b_ in progs or b_ in seen_brands): dup_hosts[0]+=1; continue
+    if b_: seen_brands.add(b_)
     ob=(p.get('offers_bounty') or '').lower(); b=1 if ob=='yes' else 0 if ob=='no' else -1
     q=add(k,base(name,p.get('policy_url',''),pl,b)); q['src']+='d'; q['sh']=sh
     q['sw']=(p.get('offers_swag') or '')=='yes' or p.get('offers_swag') is True; q['hof']=(p.get('hall_of_fame')=='yes')
@@ -146,7 +165,22 @@ CUR=[
 ]
 for c in CUR:
     q=base(c['n'],c['u'],'self',c['b']); q.update(sc=c['sc'],mx=c['mx'],ai=True,src='c',note=c['note'],sh=-1); progs[norm(c['n'])]=q
+CLOUD_CUR=[  # verified 2026-11-19 on the providers' own pages
+ {'n':'Microsoft Azure Bounty','u':'https://www.microsoft.com/en-us/msrc/bounty-microsoft-azure','b':1,'mx':60000,'sh':2,
+  'note':'Technical vulnerabilities in Azure products and services; part of the Microsoft Bounty Program (with legal safe harbor)',
+  'sc':['O|Azure products and services (see in-scope list on the policy page)','O|Azure DevOps has its own bounty: msrc/bounty-azure-devops'],'clw':'Azure services'},
+ {'n':'Google Cloud VRP','u':'https://bughunters.google.com/about/rules/4849867320328192/cloud-vulnerability-reward-program-rules','b':1,'mx':250000,'sh':-1,
+  'note':'Google Cloud products and web services; Google Workspace goes to the main Google VRP instead',
+  'sc':['O|Google Cloud products and web services that handle sensitive user data','O|Out: Google Workspace (report to Google VRP)'],'clw':'Google Cloud services'},
+]
+for c in CLOUD_CUR:
+    q=base(c['n'],c['u'],'self',c['b']); q.update(sc=c['sc'],mx=c['mx'],sh=c['sh'],cloud=True,clw=c['clw'],src='c',note=c['note']); progs[norm(c['n'])]=q
 
+NOTES={'aws vdp':'No cash rewards. Strong reports can earn an invite to the private, invite-only AWS bug bounty.',
+       'amazon web services':'AWS reports go through the AWS VDP on HackerOne (hackerone.com/aws_vdp).'}
+for q in progs.values():
+    k=q['n'].strip().lower()
+    if k in NOTES and not q.get('note'): q['note']=NOTES[k]
 # --- finalise
 out=[]
 for q in progs.values():
@@ -160,6 +194,8 @@ for q in progs.values():
     if kinds['H']: cat+='h'
     if kinds['N']: cat+='n'
     if kinds['C']: cat+='c'
+    if CLOUD_PROV.match(q['n'].strip()): q['cloud']=True; q['cprov']=True; q.setdefault('clw','Cloud provider')
+    if q.get('cloud'): cat+='k'
     q['cat']=cat
     d=len(q['sc']); q['d']=d
     wild=kinds['W']+kinds['R']
@@ -172,14 +208,14 @@ for q in progs.values():
     s+= 5 if (q['sw'] or q['hof']) else 0
     if q.get('kyc'): s-=5
     q['s']=max(0,min(100,s))
-    q.pop('ai',None)
+    q.pop('ai',None); q.pop('cloud',None)
     if not q['oos']: q.pop('oos'); q.pop('oc')
     if not q['mx']: q.pop('mx')
     out.append(q)
 out.sort(key=lambda x:x['n'].lower())
 pc=collections.Counter(q['p'] for q in out)
 print(len(out),'programs',dict(pc))
-print('cats',{c:sum(1 for q in out if c in q['cat']) for c in 'wam3ihnc'})
+print('cats',{c:sum(1 for q in out if c in q['cat']) for c in 'wam3ihnck'}); print('collapsed hostname duplicates',dup_hosts[0])
 print('scope entries',sum(q['d'] for q in out),'oos',sum(q.get('oc',0) for q in out))
 print('beginner>=60',sum(1 for q in out if q['s']>=60))
 json.dump({'generated':datetime.date.today().isoformat(),'sources':[
@@ -188,6 +224,8 @@ json.dump({'generated':datetime.date.today().isoformat(),'sources':[
   {'name':'disclose.io diodb','url':'https://github.com/disclose/diodb','license':'CC0-1.0'},
   {'name':'ProjectDiscovery public-bugbounty-programs','url':'https://github.com/projectdiscovery/public-bugbounty-programs','license':'MIT'},
   {'name':'0DIN scope','url':'https://0din.ai/scope','license':'curated summary'},
-  {'name':'huntr','url':'https://huntr.com/bounties','license':'curated summary'}],
+  {'name':'huntr','url':'https://huntr.com/bounties','license':'curated summary'},
+  {'name':'Microsoft Azure Bounty','url':'https://www.microsoft.com/en-us/msrc/bounty-microsoft-azure','license':'curated summary'},
+  {'name':'Google Cloud VRP','url':'https://bughunters.google.com/about/rules/4849867320328192/cloud-vulnerability-reward-program-rules','license':'curated summary'}],
   'programs':out},open(OUT,'w'),separators=(',',':'),ensure_ascii=False)
 import os; print(os.path.getsize(OUT)//1024,'KB')
