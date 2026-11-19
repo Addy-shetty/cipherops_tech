@@ -70,3 +70,8 @@ html[data-theme="dark"] .walk .wkey .f-h{color:#C4B5FD}
 /* narrow boxes: keep the diagram readable and let it scroll sideways */
 .wscroll{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
 @container (max-width:600px){.wsvg{min-width:var(--wmin,600px)}.wscroll{padding-bottom:44px}.wscroll::after{content:"⇆ swipe the diagram";display:block;position:sticky;left:0;font:500 11px var(--f-mono);color:var(--navy-3);padding-top:4px}}
+/* very wide boxes: grow the step panel, cap the diagram's height */
+@container (min-width:1300px){.walk{grid-template-columns:minmax(0,1fr) 400px}}
+@container (min-width:1800px){.walk{grid-template-columns:minmax(0,1fr) 460px}}
+.wsvg{max-height:min(66vh,720px)}
+.wstage:fullscreen .wsvg{max-height:calc(100vh - 140px)}

@@ -534,3 +534,21 @@ img,svg,video,canvas{max-width:100%}
 @media (pointer:coarse){.lw-hint{display:none}}
 .logo svg{flex:none} .logo{flex:none}
 @media (max-width:1400px){.hdr-prog .bar{display:none}}
+
+/* ---------- full-width desktop layout (v9): use the whole monitor ---------- */
+@media (min-width:761px){
+  .wrap{max-width:none;padding-left:clamp(20px,2.6vw,64px);padding-right:clamp(20px,2.6vw,64px)}
+}
+/* keep reading comfortable: prose lines stay ~80 characters even on very wide screens */
+.reader>p,.reader>.callout,.reader .keys,.ai-lh .lede,.ai-main>.callout{max-width:82ch}
+.sec-head p{max-width:72ch}
+/* wider screens get wider side columns instead of empty margins */
+@media (min-width:1600px){
+  .xp{grid-template-columns:300px minmax(0,1fr) 360px}
+  .xnet{min-height:520px}
+  .labgrid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+}
+@media (min-width:2200px){
+  .xp{grid-template-columns:340px minmax(0,1fr) 420px}
+  .xnet{min-height:620px}
+}

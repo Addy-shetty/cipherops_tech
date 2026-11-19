@@ -7,7 +7,7 @@
 .done-note{color:var(--teal-2);font-weight:600}
 
 /* hero */
-.aws-hero{display:grid;grid-template-columns:1.5fr 1fr;gap:var(--s6);padding:var(--s7) var(--s5) var(--s4);align-items:start}
+.aws-hero{display:grid;grid-template-columns:1.5fr 1fr;gap:var(--s6);padding-top:var(--s7);padding-bottom:var(--s4);align-items:start}
 .aws-hero h1{margin:12px 0 14px}
 .aws-hero .ctas{margin:var(--s5) 0 var(--s3)}
 .howcard{padding:var(--s5)} .howcard ol{margin:10px 0 8px;padding-left:20px;display:grid;gap:8px;font-size:16px}
@@ -168,3 +168,11 @@ table.tests,table.events{width:100%;border-collapse:collapse;font-size:14px}
 .con-row code,.multi code{overflow-wrap:anywhere}
 #module,#capstone,#real,#map{overflow-wrap:break-word} #module p code,#module li code,#capstone p code,.qq code{overflow-wrap:anywhere}
 @media (max-width:560px){#module p,#module li,.qq,.qbox{overflow-wrap:anywhere}}
+/* wide monitors: lanes become side-by-side columns so the map fills the screen */
+@media (min-width:1500px){
+  .map{grid-template-columns:repeat(5,minmax(0,1fr));align-items:start;gap:16px}
+  .lane{grid-template-columns:1fr;align-items:start;border-left:0;border-top:4px solid var(--lane);padding:12px 0 0;gap:10px}
+  .tiles{grid-template-columns:1fr}
+  .aws-hero{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+}
+@media (min-width:2200px){.tile b{font-size:21px}.tile small{font-size:14px}}
