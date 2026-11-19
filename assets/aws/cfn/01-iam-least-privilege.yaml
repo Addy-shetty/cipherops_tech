@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 1 (IAM). Creates a reports bucket and an
+  "analyst" role with a least-privilege policy: read/write reports, list the
+  bucket, delete only with MFA. Cost: effectively free (one empty S3 bucket).
+
+Parameters:
+  TrustedPrincipalArn:
+    Type: String
+    Description: ARN of the IAM user or role allowed to assume the analyst role (for example your own admin user).
+
+Resources:
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cipherops-reports-${AWS::AccountId}-${AWS::Region}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+
+  AnalystRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "cipherops-analyst-${AWS::Region}"
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Ref TrustedPrincipalArn
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: least-privilege-reports
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ReadWriteReports
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: !Sub "${ReportsBucket.Arn}/*"
+              - Sid: ListReports
+                Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt ReportsBucket.Arn
+              - Sid: DeleteOnlyWithMfa
+                Effect: Allow
+                Action: s3:DeleteObject
+                Resource: !Sub "${ReportsBucket.Arn}/*"
+                Condition:
+                  Bool:
+                    aws:MultiFactorAuthPresent: "true"
+
+Outputs:
+  BucketName:
+    Value: !Ref ReportsBucket
+  AnalystRoleArn:
+    Value: !GetAtt AnalystRole.Arn

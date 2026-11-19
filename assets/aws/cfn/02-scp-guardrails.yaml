@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 2 (Organizations SCPs). Creates a service
+  control policy that locks Regions, protects security tooling and stops
+  accounts leaving the organization, and attaches it to ONE target you choose.
+  Deploy this in your Organizations MANAGEMENT account and attach it to a
+  sandbox OU first. Cost: free.
+
+Parameters:
+  TargetId:
+    Type: String
+    Description: The ID of a SANDBOX organizational unit (ou-xxxx-xxxxxxxx) or a test account ID. Never the root on your first try.
+  AllowedRegion1:
+    Type: String
+    Default: us-east-1
+  AllowedRegion2:
+    Type: String
+    Default: eu-west-1
+  SecurityRoleName:
+    Type: String
+    Default: security-admin
+    Description: Role name that is exempt from the "protect security tooling" deny.
+
+Resources:
+  GuardrailsScp:
+    Type: AWS::Organizations::Policy
+    Properties:
+      Name: cipherops-guardrails
+      Description: Region lock, protect logging and detection, no leaving the org
+      Type: SERVICE_CONTROL_POLICY
+      TargetIds:
+        - !Ref TargetId
+      Content:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: DenyOutsideApprovedRegions
+            Effect: Deny
+            NotAction:
+              - iam:*
+              - organizations:*
+              - sts:*
+              - support:*
+              - account:*
+              - cloudfront:*
+              - route53:*
+              - waf:*
+              - wafv2:*
+              - budgets:*
+              - ce:*
+              - health:*
+            Resource: "*"
+            Condition:
+              StringNotEquals:
+                aws:RequestedRegion:
+                  - !Ref AllowedRegion1
+                  - !Ref AllowedRegion2
+          - Sid: ProtectSecurityTooling
+            Effect: Deny
+            Action:
+              - cloudtrail:StopLogging
+              - cloudtrail:DeleteTrail
+              - cloudtrail:UpdateTrail
+              - guardduty:DeleteDetector
+              - guardduty:UpdateDetector
+              - guardduty:DisassociateFromAdministratorAccount
+              - config:StopConfigurationRecorder
+              - config:DeleteConfigurationRecorder
+              - config:DeleteDeliveryChannel
+            Resource: "*"
+            Condition:
+              ArnNotLike:
+                aws:PrincipalArn: !Sub "arn:${AWS::Partition}:iam::*:role/${SecurityRoleName}"
+          - Sid: NoLeavingTheOrg
+            Effect: Deny
+            Action: organizations:LeaveOrganization
+            Resource: "*"
+
+Outputs:
+  PolicyId:
+    Value: !Ref GuardrailsScp

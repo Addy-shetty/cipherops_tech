@@ -11,6 +11,12 @@ red team and LLM security, from basic to advanced.
 - **Labs**: 12 CTF-style challenges with flags, points, hints and ranks. All are simulated in the browser.
 - **Placement test**: 12 questions that recommend a learning path.
 - **Flashcards**: spaced repetition with Leitner boxes, built from lessons, ports and HTTP status codes.
+- **AWS Security Lab** (`/aws`): 12 AWS security services (IAM, SCPs, KMS, Secrets Manager, S3,
+  CloudTrail, Config, GuardDuty, Security Hub, Inspector, Macie, WAF & Shield). Each has an
+  animated step-through walkthrough, a reference lesson, a browser lab (IAM policy evaluator,
+  simulated AWS CLI, CloudTrail hunt, findings triage or console builder), a quiz, and a guided
+  real-account lab with a CloudFormation template in `assets/aws/cfn/`. Ends with an incident
+  investigation. Lab points count toward the site-wide rank.
 - **Bounty Universe** (`/universe`): 2,800+ public bug bounty and disclosure programs as a 3D
   universe (three.js), with Bubble chart and List views. Filter by track (Web, API, Mobile, Cloud, Web3,
   AI security, Hardware & IoT…), reward type, safe harbor and platform. Each program shows its full

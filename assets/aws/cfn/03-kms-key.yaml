@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 3 (KMS). A customer managed key with
+  automatic rotation and a key policy that separates key administrators from
+  key users. Cost: about $1 per month while the key exists (prorated hourly).
+  Deleting the stack schedules the key for deletion after 7 days.
+
+Parameters:
+  KeyAdminRoleArn:
+    Type: String
+    Description: ARN of the role that administers the key (cannot decrypt).
+  KeyUserRoleArn:
+    Type: String
+    Description: ARN of the role that uses the key (encrypt/decrypt only).
+
+Resources:
+  AppKey:
+    Type: AWS::KMS::Key
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      Description: cipherops lab key - separate admins from users
+      EnableKeyRotation: true
+      PendingWindowInDays: 7
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: EnableIAMUserPermissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
+            Action: kms:*
+            Resource: "*"
+          - Sid: KeyAdministrators
+            Effect: Allow
+            Principal:
+              AWS: !Ref KeyAdminRoleArn
+            Action:
+              - kms:Create*
+              - kms:Describe*
+              - kms:Enable*
+              - kms:List*
+              - kms:Put*
+              - kms:Update*
+              - kms:Revoke*
+              - kms:Disable*
+              - kms:Get*
+              - kms:Delete*
+              - kms:TagResource
+              - kms:UntagResource
+              - kms:ScheduleKeyDeletion
+              - kms:CancelKeyDeletion
+            Resource: "*"
+          - Sid: KeyUsers
+            Effect: Allow
+            Principal:
+              AWS: !Ref KeyUserRoleArn
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:DescribeKey
+            Resource: "*"
+
+  AppKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/cipherops-lab
+      TargetKeyId: !Ref AppKey
+
+Outputs:
+  KeyArn:
+    Value: !GetAtt AppKey.Arn
+  Alias:
+    Value: !Ref AppKeyAlias

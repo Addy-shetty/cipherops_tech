@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 7 (AWS Config). Five managed rules plus
+  automatic remediation that turns off public access on any S3 bucket that
+  fails s3-bucket-public-read-prohibited.
+  PREREQUISITE: AWS Config must already be recording in this Region
+  (Config console > Get started / 1-click setup). This stack does not create a
+  recorder because each Region allows only one.
+  Cost: a small charge per rule evaluation and per recorded configuration item.
+
+Resources:
+  S3PublicReadProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cipherops-s3-bucket-public-read-prohibited
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_READ_PROHIBITED
+
+  EncryptedVolumes:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cipherops-encrypted-volumes
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: ENCRYPTED_VOLUMES
+
+  RestrictedSsh:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cipherops-restricted-ssh
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::SecurityGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: INCOMING_SSH_DISABLED
+
+  RootMfa:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cipherops-root-account-mfa-enabled
+      MaximumExecutionFrequency: TwentyFour_Hours
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
+
+  CloudTrailEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cipherops-cloudtrail-enabled
+      MaximumExecutionFrequency: TwentyFour_Hours
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+
+  RemediationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ssm.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: block-public-s3
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutBucketPublicAccessBlock
+                  - s3:GetBucketPublicAccessBlock
+                Resource: "*"
+
+  S3PublicReadRemediation:
+    Type: AWS::Config::RemediationConfiguration
+    Properties:
+      ConfigRuleName: !Ref S3PublicReadProhibited
+      TargetType: SSM_DOCUMENT
+      TargetId: AWS-DisableS3BucketPublicReadWrite
+      Automatic: true
+      MaximumAutomaticAttempts: 3
+      RetryAttemptSeconds: 60
+      Parameters:
+        AutomationAssumeRole:
+          StaticValue:
+            Values:
+              - !GetAtt RemediationRole.Arn
+        S3BucketName:
+          ResourceValue:
+            Value: RESOURCE_ID
+
+Outputs:
+  RemediationRoleArn:
+    Value: !GetAtt RemediationRole.Arn

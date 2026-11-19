@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 5 (S3). A locked-down bucket: Block Public
+  Access on, ACLs disabled, SSE-KMS by default with S3 Bucket Keys, versioning,
+  and a bucket policy that denies non-TLS requests and non-KMS uploads.
+  Cost: effectively free while empty (KMS requests use the AWS managed key).
+
+Resources:
+  SecureBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cipherops-secure-${AWS::AccountId}-${AWS::Region}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+            BucketKeyEnabled: true
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: expire-old-versions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 30
+
+  SecureBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SecureBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource:
+              - !GetAtt SecureBucket.Arn
+              - !Sub "${SecureBucket.Arn}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+          - Sid: DenyUploadsWithOtherEncryption
+            Effect: Deny
+            Principal: "*"
+            Action: s3:PutObject
+            Resource: !Sub "${SecureBucket.Arn}/*"
+            Condition:
+              "Null":
+                s3:x-amz-server-side-encryption: "false"
+              StringNotEquals:
+                s3:x-amz-server-side-encryption: aws:kms
+
+Outputs:
+  BucketName:
+    Value: !Ref SecureBucket

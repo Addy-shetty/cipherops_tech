@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 11 (Macie). Turns on Macie and creates a
+  private bucket to upload the lab's FAKE sample files into. If Macie is
+  already on, deploy with EnableMacie=false. Cost: 30-day free trial for
+  automated discovery; a one-time classification job on a few KB of fake data
+  costs well under one cent. Empty and delete the bucket when you finish.
+
+Parameters:
+  EnableMacie:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "true"
+
+Conditions:
+  TurnOnMacie: !Equals [!Ref EnableMacie, "true"]
+
+Resources:
+  MacieSession:
+    Type: AWS::Macie::Session
+    Condition: TurnOnMacie
+    Properties:
+      Status: ENABLED
+      FindingPublishingFrequency: FIFTEEN_MINUTES
+
+  SampleDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cipherops-macie-${AWS::AccountId}-${AWS::Region}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+
+Outputs:
+  BucketName:
+    Value: !Ref SampleDataBucket

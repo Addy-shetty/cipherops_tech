@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 8 (GuardDuty). Turns on GuardDuty in this
+  Region and emails you every finding with severity 7 or higher.
+  If GuardDuty is already on in this Region, deploy with CreateDetector=false.
+  Cost: 30-day free trial for accounts new to GuardDuty in a Region, then
+  usage-based. Delete the stack (or suspend GuardDuty) when you finish.
+
+Parameters:
+  AlertEmail:
+    Type: String
+    Description: Email address that receives high-severity findings (confirm the subscription email).
+  CreateDetector:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "true"
+
+Conditions:
+  MakeDetector: !Equals [!Ref CreateDetector, "true"]
+
+Resources:
+  Detector:
+    Type: AWS::GuardDuty::Detector
+    Condition: MakeDetector
+    Properties:
+      Enable: true
+      FindingPublishingFrequency: FIFTEEN_MINUTES
+
+  AlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: cipherops-guardduty-high
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref AlertEmail
+
+  AlertTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref AlertTopic
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowEventBridge
+            Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref AlertTopic
+
+  HighSeverityRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: cipherops-guardduty-high
+      Description: GuardDuty findings with severity 7 or higher
+      EventPattern:
+        source:
+          - aws.guardduty
+        detail-type:
+          - GuardDuty Finding
+        detail:
+          severity:
+            - numeric: [">=", 7]
+      Targets:
+        - Arn: !Ref AlertTopic
+          Id: email
+
+Outputs:
+  TopicArn:
+    Value: !Ref AlertTopic

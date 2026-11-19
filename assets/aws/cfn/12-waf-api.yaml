@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 12 (WAF). A tiny API Gateway REST API (mock
+  response, no backend) protected by a regional web ACL with four AWS managed
+  rule groups and a rate-based rule. Cost: about $5 per month for the web ACL
+  plus $1 per rule or rule group (prorated hourly), so a one-hour lab costs a
+  few cents. DELETE THE STACK WHEN YOU FINISH.
+
+Parameters:
+  RateLimit:
+    Type: Number
+    Default: 1000
+    MinValue: 10
+    Description: Requests per client IP per 5 minutes before blocking.
+
+Resources:
+  Api:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: cipherops-waf-lab
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  RootGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref Api
+      ResourceId: !GetAtt Api.RootResourceId
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseTemplates:
+              application/json: '{"message": "hello from the cipherops WAF lab"}'
+      MethodResponses:
+        - StatusCode: "200"
+
+  Deployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: RootGet
+    Properties:
+      RestApiId: !Ref Api
+
+  ProdStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref Api
+      DeploymentId: !Ref Deployment
+      StageName: prod
+
+  WebAcl:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: cipherops-waf-lab
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: cipherops-waf-lab
+      Rules:
+        - Name: ip-reputation
+          Priority: 0
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAmazonIpReputationList
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: ip-reputation
+        - Name: common
+          Priority: 1
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: common
+        - Name: known-bad-inputs
+          Priority: 2
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: known-bad-inputs
+        - Name: sqli
+          Priority: 3
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesSQLiRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: sqli
+        - Name: rate-limit-per-ip
+          Priority: 4
+          Action:
+            Block: {}
+          Statement:
+            RateBasedStatement:
+              Limit: !Ref RateLimit
+              AggregateKeyType: IP
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: rate-limit-per-ip
+
+  WebAclAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    DependsOn: ProdStage
+    Properties:
+      ResourceArn: !Sub "arn:${AWS::Partition}:apigateway:${AWS::Region}::/restapis/${Api}/stages/prod"
+      WebACLArn: !GetAtt WebAcl.Arn
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+  WebAclArn:
+    Value: !GetAtt WebAcl.Arn

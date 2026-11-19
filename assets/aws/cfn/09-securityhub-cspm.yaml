@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  cipherops_tech AWS Security Lab 9 (Security Hub CSPM). Turns on Security Hub
+  CSPM with the default standards and consolidated control findings, plus an
+  automation rule that raises any finding on a resource tagged
+  env=prod to at least HIGH. Most controls need AWS Config recording.
+  Cost: 30-day free trial, then per check and per finding ingested.
+
+Resources:
+  Hub:
+    Type: AWS::SecurityHub::Hub
+    Properties:
+      EnableDefaultStandards: true
+      ControlFindingGenerator: SECURITY_CONTROL
+      AutoEnableControls: true
+
+  ProdIsHigh:
+    Type: AWS::SecurityHub::AutomationRule
+    DependsOn: Hub
+    Properties:
+      RuleName: cipherops-prod-findings-are-high
+      Description: Escalate MEDIUM/LOW failed findings on prod-tagged resources
+      RuleOrder: 10
+      RuleStatus: ENABLED
+      Criteria:
+        ResourceTags:
+          - Comparison: EQUALS
+            Key: env
+            Value: prod
+        SeverityLabel:
+          - Comparison: EQUALS
+            Value: MEDIUM
+          - Comparison: EQUALS
+            Value: LOW
+        ComplianceStatus:
+          - Comparison: EQUALS
+            Value: FAILED
+      Actions:
+        - Type: FINDING_FIELDS_UPDATE
+          FindingFieldsUpdate:
+            Severity:
+              Label: HIGH
+            Note:
+              Text: Escalated by cipherops automation rule (prod resource)
+              UpdatedBy: cipherops-lab
+
+Outputs:
+  HubArn:
+    Value: !Ref Hub

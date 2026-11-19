@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS Security Lab — IAM, KMS, GuardDuty, Security Hub and more · cipherops_tech</title>
+<meta name="description" content="Learn AWS security hands-on: 12 services from IAM and SCPs to KMS, CloudTrail, GuardDuty, Security Hub, Inspector, Macie and WAF. Free browser labs, plus guided labs with CloudFormation templates for your own AWS account.">
+<meta name="theme-color" content="#FBF9F5">
+<link rel="canonical" href="https://cipherops-tech.vercel.app/aws">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="cipherops_tech">
+<meta property="og:title" content="AWS Security Lab — cipherops_tech">
+<meta property="og:description" content="12 AWS security services, free browser labs, real-account CloudFormation labs and a final incident to investigate.">
+<meta property="og:url" content="https://cipherops-tech.vercel.app/aws">
+<meta property="og:image" content="https://cipherops-tech.vercel.app/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/app.css?v=5">
+<link rel="stylesheet" href="/assets/aws/aws.css?v=1">
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<a class="skip" href="#map">Skip to the services</a>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="cipherops_tech home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2.5 24 6.6v6.7c0 6-4.2 10.7-10 12.2C8.2 24 4 19.3 4 13.3V6.6L14 2.5Z" fill="#FFFDF9" stroke="#1B2A4A" stroke-width="1.6"/><path d="M9.5 14.2l3 3 6-6.4" fill="none" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="color:var(--navy)">cipherops<span style="color:var(--teal)">_</span>tech</span>
+    </a>
+    <nav class="tabs" aria-label="Sections"><a href="/">Home</a><a href="#map">Services</a><a href="#capstone">Incident</a><a href="#real">Real AWS labs</a><a href="/universe">Bounty Universe</a></nav>
+    <div class="hdr-tools"><button class="icon-btn themebtn" id="themeBtn" aria-label="Switch theme">☾</button><span class="ptspill" id="hdrPts">⚑ 0 pts</span><div class="hdr-prog" title="Services completed"><span id="awsCount">0/12</span><div class="bar"><i id="awsBar" style="width:0%"></i></div></div></div>
+  </div>
+</header>
+
+<main>
+  <section class="wrap aws-hero">
+    <div>
+      <div class="eyebrow">cipherops_tech · AWS Security Lab</div>
+      <h1>Learn AWS security by breaking and fixing a real-looking account.</h1>
+      <p class="lede">Twelve services, from IAM to WAF. Each one has a plain-English lesson, a lab that runs in your browser (no AWS account, no cost), a quiz, and an optional guided lab with a CloudFormation template for your own sandbox account.</p>
+      <div class="row ctas"><button class="btn primary" id="startBtn">Start learning →</button><a class="btn" href="#capstone">Investigate the final incident</a><a class="btn ghost" href="#real">Real-account labs</a></div>
+      <p class="muted" id="heroProg"></p>
+    </div>
+    <div class="howcard card">
+      <h4>How each module works</h4>
+      <ol>
+        <li><b>Walkthrough</b>: an animated, step-by-step diagram of how the service works and how attacks play out.</li>
+        <li><b>Learn</b>: what it is, why it matters, how it goes wrong, a defender checklist and CLI commands.</li>
+        <li><b>Lab</b>: write policies against a real evaluation engine, drive a simulated AWS CLI, hunt through CloudTrail, or triage findings.</li>
+        <li><b>Quiz</b>: three questions to lock it in.</li>
+        <li><b>Real AWS account</b>: deploy a template, test it, clean it up.</li>
+      </ol>
+      <p class="muted">Labs earn points that count toward your cipherops rank.</p>
+    </div>
+  </section>
+
+  <section class="wrap block" id="services" aria-labelledby="mapH">
+    <div class="sec-head"><h2 id="mapH">Your AWS account</h2><p class="muted">Work left to right, top to bottom, or jump to any service. Identity first: most breaches start there.</p></div>
+    <div class="map card" id="map"></div>
+  </section>
+
+  <section class="wrap" id="module" hidden aria-live="polite"></section>
+
+  <section class="wrap block" id="capstone" aria-labelledby="capH">
+    <div class="sec-head"><div class="eyebrow">Final incident · 250 pts</div><h2 id="capH">Incident: the leaky thumbnail service</h2>
+      <p class="lede">Friday 16:40 UTC. GuardDuty reports that the image service's instance-role credentials are being used from outside AWS. Investigate the trail and decide what to do. It pulls together IAM, S3, KMS, CloudTrail and GuardDuty.</p></div>
+    <div id="capLab"></div>
+  </section>
+
+  <section class="wrap block" id="real" aria-labelledby="realH">
+    <div class="sec-head"><h2 id="realH">Labs in your own AWS account</h2>
+      <p class="lede">Every template is small, cheap and has a cleanup step. Use a separate sandbox account, never production.</p></div>
+    <div class="real-grid">
+      <div class="card side"><h4>Set up safely (once)</h4>
+        <ol class="steps">
+          <li>Create a sandbox account, ideally in an AWS Organization so you can close it later.</li>
+          <li>In <b>AWS Budgets</b>, create a <b>zero spend budget</b> or a small monthly budget with email alerts.</li>
+          <li>Sign in with IAM Identity Center or an MFA-protected admin, never the root user.</li>
+          <li>Open <b>AWS CloudShell</b> in one Region (for example us-east-1). The AWS CLI is already installed there.</li>
+          <li>Upload the template (CloudShell → Actions → Upload file), then run the deploy command from the lab.</li>
+          <li>When you finish, run the cleanup steps and check <code>aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE</code> shows nothing from cipherops.</li>
+        </ol></div>
+      <div class="tblwrap"><table class="tests"><thead><tr><th scope="col">Service</th><th scope="col">Template</th><th scope="col">Cost while running</th><th scope="col">Time</th></tr></thead><tbody id="realIndex"></tbody></table></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><span>© cipherops_tech · Original lessons and labs. Labs on this page are simulations.</span>
+  <span>Amazon Web Services, AWS and the service names are trademarks of Amazon.com, Inc. or its affiliates. cipherops_tech isn't affiliated with or endorsed by AWS.</span></div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/assets/aws/02-engines.js?v=1" defer></script>
+<script src="/assets/aws/01-content.js?v=1" defer></script>
+<script src="/assets/aws/04-player.js?v=1" defer></script>
+<script src="/assets/aws/05-scenes.js?v=1" defer></script>
+<script src="/assets/aws/03-app.js?v=1" defer></script>
+</body>
+</html>

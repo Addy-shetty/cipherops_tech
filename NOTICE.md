@@ -12,6 +12,13 @@ writing. Every lab, server and payload response on the site is simulated in the 
 - **PayloadsAllTheThings** (MIT) and **SecLists** (MIT) — linked. If you import their content, include their MIT licence notices.
 - **GTFOBins**, **OWASP ZAP**, **Frida**, **Kubernetes** and **AWS** documentation — linked.
 
+## AWS Security Lab
+Lessons, walkthroughs, labs and CloudFormation templates in `aws/` and `assets/aws/` are original work.
+Links point to AWS documentation. Amazon Web Services, AWS and the AWS service names are trademarks of
+Amazon.com, Inc. or its affiliates; cipherops_tech isn't affiliated with or endorsed by AWS. The Macie
+sample files use invented names, official test card numbers and AWS's documented example access key.
+Real-account templates are provided as-is for learning; anyone deploying them is responsible for the cost.
+
 ## Bounty Universe data and code
 - **bounty-targets-data** by Arkadiy Tetelman (MIT) — HackerOne, Bugcrowd, Intigriti and YesWeHack program scopes. https://github.com/arkadiyt/bounty-targets-data
 - **disclose.io diodb** (CC0-1.0) — program list and safe-harbor flags. https://github.com/disclose/diodb
