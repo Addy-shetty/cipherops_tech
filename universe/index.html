@@ -21,8 +21,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="preload" href="/assets/universe/programs.json?v=2" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/universe/universe.css?v=2">
+<link rel="preload" href="/assets/universe/programs.json?v=3" as="fetch" crossorigin>
+<link rel="stylesheet" href="/assets/universe/universe.css?v=3">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -33,8 +33,8 @@
       <div><b>BOUNTY UNIVERSE</b><small>← cipherops_tech</small></div>
     </a>
     <div class="search"><input id="q" placeholder="Find a program (e.g. gitlab, nasa, shopify)…" autocomplete="off" aria-label="Search programs"><div class="sugg" id="sugg" role="listbox"></div></div>
-    <div class="tabs" role="group" aria-label="View"><button data-view="universe" aria-pressed="true">Universe</button><button data-view="bubble" aria-pressed="false">Bubble chart</button><button data-view="list" aria-pressed="false">List</button></div>
-    <div class="dlwrap"><button class="btn sm dlbtn" id="dlAll" aria-haspopup="menu" aria-expanded="false">⬇ Download scopes</button><div class="dlmenu" id="dlMenu" role="menu"></div></div>
+    <div class="tabs" role="group" aria-label="View"><button data-view="universe" aria-pressed="true">Universe</button><button data-view="bubble" aria-pressed="false">Bubble<span class="wide"> chart</span></button><button data-view="list" aria-pressed="false">List</button></div>
+    <div class="dlwrap"><button class="btn sm dlbtn" id="dlAll" aria-haspopup="menu" aria-expanded="false" aria-label="Download scopes">⬇<span class="wide"> Download scopes</span></button><div class="dlmenu" id="dlMenu" role="menu"></div></div>
     <div class="count" id="count" aria-live="polite"></div>
   </header>
   <main class="stage" id="stage">
@@ -71,7 +71,7 @@
   </main>
   <footer class="foot">
     <span id="snap"></span>
-    <span>Data: <a href="https://github.com/arkadiyt/bounty-targets-data" target="_blank" rel="noopener">bounty-targets-data</a> (MIT) · <a href="https://github.com/infosec-us-team/Immunefi-Bug-Bounty-Programs-Unofficial" target="_blank" rel="noopener">Immunefi mirror</a> · <a href="https://github.com/disclose/diodb" target="_blank" rel="noopener">diodb</a> (CC0) · <a href="https://github.com/projectdiscovery/public-bugbounty-programs" target="_blank" rel="noopener">ProjectDiscovery</a> (MIT) · <a href="https://0din.ai/scope" target="_blank" rel="noopener">0DIN</a> · <a href="https://huntr.com/bounties" target="_blank" rel="noopener">huntr</a> · <a href="https://www.microsoft.com/en-us/msrc/bounty-microsoft-azure" target="_blank" rel="noopener">MSRC Azure</a> · <a href="https://bughunters.google.com/about/rules/4849867320328192/cloud-vulnerability-reward-program-rules" target="_blank" rel="noopener">Google Cloud VRP</a></span>
+    <details class="fsrc" id="fsrc" open><summary>Data sources</summary> <span>Data: <a href="https://github.com/arkadiyt/bounty-targets-data" target="_blank" rel="noopener">bounty-targets-data</a> (MIT) · <a href="https://github.com/infosec-us-team/Immunefi-Bug-Bounty-Programs-Unofficial" target="_blank" rel="noopener">Immunefi mirror</a> · <a href="https://github.com/disclose/diodb" target="_blank" rel="noopener">diodb</a> (CC0) · <a href="https://github.com/projectdiscovery/public-bugbounty-programs" target="_blank" rel="noopener">ProjectDiscovery</a> (MIT) · <a href="https://0din.ai/scope" target="_blank" rel="noopener">0DIN</a> · <a href="https://huntr.com/bounties" target="_blank" rel="noopener">huntr</a> · <a href="https://www.microsoft.com/en-us/msrc/bounty-microsoft-azure" target="_blank" rel="noopener">MSRC Azure</a> · <a href="https://bughunters.google.com/about/rules/4849867320328192/cloud-vulnerability-reward-program-rules" target="_blank" rel="noopener">Google Cloud VRP</a></span></details>
     <span>Listing ≠ permission. Always read the live policy before testing.</span>
   </footer>
 </div>
@@ -93,6 +93,6 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="/assets/universe/three.min.js?v=r128" defer></script>
-<script src="/assets/universe/universe.js?v=2" defer></script>
+<script src="/assets/universe/universe.js?v=3" defer></script>
 </body>
 </html>

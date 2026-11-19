@@ -58,7 +58,7 @@ function why(p){ return [
   [p.sw||p.hof, p.sw||p.hof?"Swag or hall of fame":"No swag or hall of fame listed"],
   ...(p.kyc?[[false,"KYC (identity check) required before payout"]]:[])]; }
 function openCard(i){
-  selected=i; const p=P[i], C=$("#card"); C.innerHTML=""; C.classList.add("on");
+  selected=i; const p=P[i], C=$("#card"); C.innerHTML=""; C.classList.add("on"); if(window.__isMob&&window.__isMob()){ $("#filters").classList.add("closed"); $("#stage").classList.add("fclosed"); }
   C.append(el("button",{className:"x",onclick:closeCard,"aria-label":"Close"},"✕"),
     el("div",{className:"eyebrow"},PLAT[p.p].n), el("h2",{},p.n),
     el("div",{className:"meta"}, [...p.cat].filter(c=>TRACK[c]).map(c=>el("span",{className:"tag trk",style:"border-color:"+TRACK[c].c+"88;color:"+TRACK[c].c},TRACK[c].n)), el("span",{className:"tag "+(p.b===1?"gold":p.b===0?"teal":"")},TYPE[p.b].n), el("span",{className:"tag"+(p.sh===2?" teal":"")},"Safe harbor: "+SHN[p.sh]), p.sw?el("span",{className:"tag violet"},"Swag"):null, p.hof?el("span",{className:"tag violet"},"Hall of fame"):null),
@@ -70,10 +70,10 @@ function openCard(i){
       p.aiw?el("dt",{},"AI in scope"):null, p.aiw?el("dd",{},el("code",{className:"aiw"},p.aiw)):null,
       p.clw?el("dt",{},p.cprov?"Cloud provider":"Cloud in scope"):null, p.clw?el("dd",{},p.cprov?"Yes, this company runs cloud infrastructure":el("code",{className:"clw"},p.clw)):null,
       p.note?el("dt",{},"Focus"):null, p.note?el("dd",{},p.note):null),
-    p.cat.includes("k")?el("div",{className:"cloudwarn"},el("b",{},"Cloud rule: "),"only test assets this company owns. Customer buckets, VMs and apps hosted on a cloud provider belong to the customer, and testing them is out of scope and breaks the provider's terms."):null,
+    p.cat.includes("k")?el("div",{className:"cloudwarn"},el("b",{},"Cloud rule: "),"only test assets this company owns. Customer buckets, VMs and apps hosted on a cloud provider belong to the customer, and testing them is out of scope and breaks the provider's terms."):"",
     scopeView(p),
-    learnBox(p),
-    scopeBox(p),
+    learnBox(p)||"",
+    scopeBox(p)||"",
     el("p",{style:"font-size:12.5px;color:var(--text-3);margin:4px 0 0"},"Details come from community datasets and can be out of date. The live policy is the source of truth."),
     el("div",{className:"warn"},"Before you test: read the live policy, stay strictly in scope, use your own test accounts, and stop at proof of concept."),
     el("div",{className:"row"}, p.u?el("a",{className:"btn primary sm",href:p.u,target:"_blank",rel:"noopener noreferrer"},"Read the policy ↗"):null,
@@ -419,6 +419,15 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ $("#dlMenu").clas
 
 /* ---------- boot ---------- */
 buildFilters();
+/* responsive defaults: phones get a clear view first, filters as a bottom sheet */
+const MOB=matchMedia("(max-width:760px)"), COARSE=matchMedia("(pointer:coarse)").matches;
+const isMob=()=>MOB.matches; window.__isMob=isMob;
+const closeFilters=()=>{ $("#filters").classList.add("closed"); $("#stage").classList.add("fclosed"); };
+function applyResponsive(){ const src=$("#fsrc"); if(src) src.open=!isMob(); if(isMob()){ const F=$("#filters"); F.style.transition="none"; closeFilters(); void F.offsetHeight; requestAnimationFrame(()=>{ F.style.transition=""; }); } }
+applyResponsive(); try{ MOB.addEventListener("change",applyResponsive); }catch(e){ MOB.addListener(applyResponsive); }
+if(COARSE){ $("#hint").textContent="drag to orbit · pinch to zoom · tap a planet"; setTimeout(()=>$("#hint").classList.add("gone"),9000); }
+$("#openF").addEventListener("click",()=>{ if(isMob()) closeCard(); });
+$("#stage").addEventListener("pointerdown",e=>{ if(isMob()&&!$("#filters").classList.contains("closed")&&!e.target.closest("#filters,#openF")) closeFilters(); });
 try{ U=buildUniverse(); }catch(err){ console.error(err); U=null; $("#noweb").style.display="flex"; $("#gl").style.display="none"; }
 applyFilters();
 let seen=false; try{ seen=!!localStorage.getItem("bu-intro"); }catch(e){}
@@ -427,6 +436,6 @@ if(!U) setView("list");
 window.__BU={makeZip,buildDlMenu,scopeTxt,P,F,openCard,setView,applyFilters,startHere,get U(){return U;}};
 }
 
-fetch("/assets/universe/programs.json?v=2",{cache:"default"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+fetch("/assets/universe/programs.json?v=3",{cache:"default"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
   .then(RAW=>{ document.getElementById("loading").hidden=true; bootUniverse(RAW); })
   .catch(err=>{ console.error(err); document.getElementById("loading").textContent="Couldn't load the program data. Please refresh."; });

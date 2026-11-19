@@ -191,3 +191,34 @@ html[data-theme="dark"] .wglyph,html[data-theme="dark"] .wnt{fill:#1B2A4A}
 
 @media (max-width:560px){.wmet{flex-basis:45%}.wmet b{font-size:12.5px}.wlegend{font-size:10.5px;gap:8px}.wrail li{min-width:40px}.wrail li span{display:none}.mtabs button{padding:10px 10px}}
 .tests td{padding:7px 10px}
+/* ---------- responsive (phone / tablet) ---------- */
+.wmain{grid-template-columns:minmax(0,1fr)} .wmain>*,.wside>*,.walk>*{min-width:0}
+.lab,.lab>*,.pol-grid>*,.cli-grid>*,.hunt-grid>*,.con-grid>*,.learn-grid>*,.real-grid>*{min-width:0}
+@media (max-width:980px){.pol-grid,.hunt-grid,.con-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:900px){.cli-grid,.learn-grid,.real-grid,.aws-hero{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){
+  .lab{padding:var(--s4)}
+  .code-edit{font-size:12.5px}
+  .term{height:320px}
+  .tests th,.events th{padding:7px 8px}.tests td,.events td{padding:7px 8px}
+  .wpanel{padding:12px 14px}
+}
+@media (max-width:560px){
+  .lab{padding:14px 12px;border-radius:var(--r-md)}
+  .wstage{padding:8px}
+  .wmet{min-width:0;flex-basis:calc(50% - 4px);max-width:none}
+  .wrail li{min-width:34px}.wrail button{width:30px;height:30px}
+  .wctl{right:2px;bottom:2px}
+  table.tests,table.events{font-size:13px}
+}
+@media (pointer:coarse){.wbtn{width:42px;height:42px}.mtabs button{min-height:44px}}
+.hunt-q>li{min-width:0} 
+@media (max-width:560px){.hunt-q{padding-left:18px}.hunt-q input[type=text]{min-width:0;width:100%}}
+.findings{grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
+.con-grid{grid-template-columns:minmax(min(100%,280px),1fr) 1.5fr}
+@media (max-width:980px){.con-grid{grid-template-columns:minmax(0,1fr)}}
+.realmeta{display:flex;flex-wrap:wrap;gap:6px} .realmeta .tag{white-space:normal;line-height:1.35;text-align:left}
+.con-panel{grid-template-columns:minmax(0,1fr)} .con-row{min-width:0;flex-wrap:wrap} .con-row>*{min-width:0} .con-row select,.con-row input[type=number]{max-width:100%}
+.con-row code,.multi code{overflow-wrap:anywhere}
+#module,#capstone,#real,#map{overflow-wrap:break-word} #module p code,#module li code,#capstone p code,.qq code{overflow-wrap:anywhere}
+@media (max-width:560px){#module p,#module li,.qq,.qbox{overflow-wrap:anywhere}}
