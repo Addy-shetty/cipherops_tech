@@ -116,7 +116,7 @@ function openLesson(id,step,focus){
     qs.append(h("div",{className:"card dashed quiz"},h("div",{className:"eyebrow"},"Question "+(qi+1)+" of "+les.quiz.length),h("h4",{},Q.q),opts,fb)); });
   M.append(qs);
   if(les.cross&&CROSS[les.cross]) M.append(h("div",{className:"callout"},h("span",{"aria-hidden":"true"},"🛡"),h("span",{},"Learn to attack and defend this hands-on in the security curriculum: ",h("a",{href:"/#"+les.cross},CROSS[les.cross]+" →"))));
-  if(les.links&&les.links.length) M.append(h("section",{className:"ai-sec"},h("div",{className:"eyebrow",style:"margin-bottom:10px"},"Go deeper"),h("div",{className:"golinks"},les.links.map(([t,u])=>h("a",{href:u,target:"_blank",rel:"noopener"},t+" ↗")))));
+  if(les.links&&les.links.length) M.append(h("section",{className:"ai-sec"},h("div",{className:"eyebrow",style:"margin-bottom:10px"},"Go deeper"),h("div",{className:"golinks"},les.links.map(([t,u])=>h("a",{href:u,target:"_blank",rel:"noopener"},t)))));
   const prev=L[idx-1], next=L[idx+1];
   M.append(h("nav",{className:"rfoot","aria-label":"Lesson navigation"},
     prev?h("a",{className:"btn sm",href:"#/"+prev.id},"← "+prev.title):h("span",{}),h("span",{className:"spacer"}),

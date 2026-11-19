@@ -64,7 +64,7 @@ count = client.messages.count_tokens(
 print(count.input_tokens)`,out:"12   # includes the message formatting, not just your words"}],
  quiz:[{q:"Why do LLMs work with tokens instead of whole words?",o:["Tokens are faster to type","Sub-word pieces cover rare words, typos and many languages with a fixed vocabulary","Words would use less memory","The internet is stored in tokens"],a:1,why:"A sub-word vocabulary (for example BPE) can spell out any word, even ones it never saw, from a few tens of thousands of pieces."},
   {q:"A user asks for a 2,000-word essay and complains it's slow. What dominates the wait?",o:["Tokenizing the prompt","Prefill of the short prompt","Decoding thousands of output tokens one by one","Detokenizing"],a:2,why:"Each output token needs another pass through the model, so long outputs dominate total time."}],
- links:[["Claude docs: tokens and models","https://docs.claude.com/en/docs/about-claude/models/overview"]]});
+ links:[["Claude docs: tokens and models","https://platform.claude.com/docs/en/about-claude/models/overview"]]});
 
 addL({id:"tokens-context",mod:"foundations",title:"Understanding Tokens & Context Windows",min:8,level:"Beginner",
  desc:"Why everything is counted in tokens, and what happens when a conversation outgrows the context window.",
@@ -101,7 +101,7 @@ def build_messages(history, summary, user_msg):
     return msgs + recent + [{"role": "user", "content": user_msg}]`}],
  quiz:[{q:"Which of these does NOT count toward the context window?",o:["The system prompt","Earlier chat turns you re-send","The model's answer","Messages from a different conversation you didn't send"],a:3,why:"Only what's in this request (and the answer it generates) counts. The model can't see anything you didn't send."},
   {q:"Your prompt is 195k tokens in a 200k window and you set max_tokens to 20k. What happens?",o:["It works fine","The request is rejected or the answer is cut short","The model compresses the prompt automatically","The window grows"],a:1,why:"Input plus maximum output must fit in the window. Trim or retrieve less."}],
- links:[["Claude docs: context windows","https://docs.claude.com/en/docs/build-with-claude/context-windows"]]});
+ links:[["Claude docs: context windows","https://platform.claude.com/docs/en/build-with-claude/context-windows"]]});
 
 addL({id:"sampling",mod:"foundations",title:"Temperature, Top-P, and Sampling",min:12,level:"Intermediate",
  desc:"The dials that decide how predictable or creative the output is, and when to touch them.",
@@ -188,7 +188,7 @@ print(msg.stop_reason, msg.usage.input_tokens, msg.usage.output_tokens)`,out:"A 
        "messages": [{"role": "user", "content": "Hello"}]}'`}],
  quiz:[{q:"Where should an API key for a public web app live?",o:["In the front-end JavaScript bundle","In a server-side environment variable or secrets manager","In the HTML as a data attribute","In localStorage"],a:1,why:"Anything shipped to the browser can be read by users. Keep keys server-side and proxy the call."},
   {q:"stop_reason is \"max_tokens\". What does that mean?",o:["The answer finished normally","The answer was cut off at your limit","The model refused","You were rate limited"],a:1,why:"The model hit the max_tokens cap you set, so the output is incomplete."}],
- links:[["Claude docs: Messages API","https://docs.claude.com/en/api/messages"]]});
+ links:[["Claude docs: Messages API","https://platform.claude.com/docs/en/api/messages"]]});
 
 addL({id:"streaming",mod:"building",title:"Streaming Responses",min:10,level:"Intermediate",
  desc:"Show the answer as it's written using server-sent events, and handle the events correctly.",
@@ -225,7 +225,7 @@ final = stream.get_final_message()       # full message after message_stop
 print("\\n", final.stop_reason, final.usage.output_tokens)`}],
  quiz:[{q:"Which event tells you the stream is complete?",o:["message_start","content_block_delta","message_stop","ping"],a:2,why:"message_stop is the last event. message_delta just before it carries the stop_reason."},
   {q:"Does streaming reduce total generation time?",o:["Yes, by about half","No, it shows output sooner but total time is similar","Only for short answers","Only with temperature 0"],a:1,why:"The model generates at the same speed. Streaming improves how fast it feels."}],
- links:[["Claude docs: streaming","https://docs.claude.com/en/docs/build-with-claude/streaming"]]});
+ links:[["Claude docs: streaming","https://platform.claude.com/docs/en/build-with-claude/streaming"]]});
 
 addL({id:"tool-use",mod:"building",title:"Function Calling & Tool Use",min:20,level:"Intermediate",
  desc:"Let the model ask your code to run a function, then use the result in its answer.",
@@ -280,7 +280,7 @@ if resp.stop_reason == "tool_use":
 print(resp.content[0].text)`}],
  quiz:[{q:"Who executes the function when the model returns a tool_use block?",o:["The model, on the provider's servers","Your application code","The user's browser automatically","Nobody, it's simulated"],a:1,why:"For your own tools (client tools), the model only writes the request. Your code runs it and returns tool_result."},
   {q:"What links a tool_result to the right request?",o:["The tool name","The tool_use_id matching the tool_use block's id","The order of messages only","A timestamp"],a:1,why:"tool_use_id must equal the id of the tool_use block it answers."}],
- links:[["Claude docs: tool use","https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"]]});
+ links:[["Claude docs: tool use","https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"]]});
 
 addL({id:"context-mgmt",mod:"building",title:"Managing Conversation Context",min:12,level:"Intermediate",
  desc:"The API is stateless. Here's how chat apps fake memory, and how to keep it fast and cheap.",
@@ -319,7 +319,7 @@ addL({id:"context-mgmt",mod:"building",title:"Managing Conversation Context",min
 print(resp.usage.cache_read_input_tokens, resp.usage.input_tokens)`}],
  quiz:[{q:"Why does a chat app re-send earlier messages on every turn?",o:["To improve the model's training","Because the API keeps no memory between calls","To pay less","It doesn't need to"],a:1,why:"Each API call is independent. Context must be included in the request."},
   {q:"How should you order a prompt to benefit from prompt caching?",o:["Changing parts first, stable parts last","Stable parts first, changing parts last","Random order","Caching ignores order"],a:1,why:"Caching works on an identical prefix, so stable content must come first."}],
- links:[["Claude docs: prompt caching","https://docs.claude.com/en/docs/build-with-claude/prompt-caching"]]});
+ links:[["Claude docs: prompt caching","https://platform.claude.com/docs/en/build-with-claude/prompt-caching"]]});
 
 /* ======================= MODULE 3 · PROMPTING ======================= */
 addL({id:"prompt-anatomy",mod:"prompting",title:"Anatomy of an Effective Prompt",min:15,level:"Beginner",
@@ -366,7 +366,7 @@ Answer as three bullets and one "Decision:" line. No preamble.
 </report>`}],
  quiz:[{q:"What's the main reason to wrap a pasted document in XML-style tags?",o:["Models only read XML","It separates data from instructions and makes the prompt easier to reference","It's required by the API","It makes the prompt shorter"],a:1,why:"Tags draw a clear line between your instructions and the content being worked on."},
   {q:"Your app parses the model's JSON. What else should you do?",o:["Trust it, models are precise","Validate it and handle failures","Set temperature to 2","Ask for XML instead"],a:1,why:"Always validate structured output in code and retry or fall back on errors."}],
- links:[["Claude docs: prompt engineering overview","https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview"]]});
+ links:[["Claude docs: prompt engineering overview","https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview"]]});
 
 addL({id:"system-prompts",mod:"prompting",title:"System Prompts & Personas",min:10,level:"Intermediate",
  desc:"What belongs in the system prompt, what doesn't, and why it is not a security boundary.",
@@ -483,4 +483,4 @@ Then re-check your conclusion against the rules.
 Give only "allowed" or "blocked" inside <answer> tags.`,out:"<thinking>3389 isn't 443 or 22, so rules 1–2 don't match; rule 3 denies…</thinking>\n<answer>blocked</answer>"}],
  quiz:[{q:"Why does asking a model to think step by step help on logic problems?",o:["It switches to a bigger model","It gives the model output tokens to work through intermediate steps","It disables sampling","It makes the answer shorter"],a:1,why:"Writing out the steps lets the model use those tokens as working memory."},
   {q:"Why put the final result in <answer> tags?",o:["Fashion","So code can extract the answer and keep the reasoning separate","The API requires it","It's cheaper"],a:1,why:"Clear separation lets you show the answer and log the reasoning."}],
- links:[["Claude docs: chain-of-thought","https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/chain-of-thought"]]});
+ links:[["Claude docs: chain-of-thought","https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/chain-of-thought"]]});
