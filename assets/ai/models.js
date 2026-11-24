@@ -42,7 +42,7 @@
       best: "Authorised penetration testing, red-team prep, reviewing IAM policies, k8s configs and code", tasks: ["offense", "code"], size: "7B · Qwen2.5-Coder base", file: "~4.7 GB at Q4", hw: 8, vram: "8 GB VRAM",
       licence: "Apache 2.0 with extra use restrictions on the card", catchTxt: "Dual-use by design. Its terms forbid harmful uses, and you're responsible for staying inside your scope and the law.",
       run: "vllm serve WhiteRabbitNeo/WhiteRabbitNeo-V3-7B" },
-    { kind: "sec", name: "DeepHat V1 7B", by: "Kindo (formerly WhiteRabbitNeo)", host: "Hugging Face · DeepHat", url: "https://www.deephat.ai",
+    { kind: "sec", name: "DeepHat V1 7B", by: "Kindo (formerly WhiteRabbitNeo)", host: "deephat.ai", url: "https://www.deephat.ai",
       what: "WhiteRabbitNeo's successor. V1 is open-weight on Hugging Face; the newer Deep Hat v2 is Kindo's proprietary hosted model.",
       best: "Same jobs as WhiteRabbitNeo, from the newer line", tasks: ["offense", "code"], size: "7B", file: "~4.7 GB at Q4", hw: 8, vram: "8 GB VRAM",
       licence: "See model card", catchTxt: "Only V1 is downloadable. Check the card's terms before use.",
