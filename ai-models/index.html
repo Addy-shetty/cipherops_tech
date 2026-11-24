@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security LLMs you can run locally · AI & LLM · cipherops_tech</title>
+<meta name="description" content="A curated, checked list of cybersecurity LLMs you can run on your own PC or server: Cisco Foundation-Sec, Antares, RedSage, Llama-Primus, WhiteRabbitNeo and more, with hardware needs, licences, caveats and run commands.">
+<meta name="theme-color" content="#FBF9F5">
+<link rel="canonical" href="https://cipherops-tech.vercel.app/ai-models">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="cipherops_tech">
+<meta property="og:title" content="Security LLMs you can run locally — cipherops_tech">
+<meta property="og:description" content="Security-tuned open-weight models, what they are good at, what hardware they need and how to run them.">
+<meta property="og:url" content="https://cipherops-tech.vercel.app/ai-models">
+<meta property="og:image" content="https://cipherops-tech.vercel.app/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/app.css?v=10">
+<link rel="stylesheet" href="/assets/css/walk.css?v=4">
+<link rel="stylesheet" href="/assets/ai/ai.css?v=3">
+<link rel="stylesheet" href="/assets/ai/models.css?v=1">
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<a class="skip" href="#models">Skip to the models</a>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="cipherops_tech home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2.5 24 6.6v6.7c0 6-4.2 10.7-10 12.2C8.2 24 4 19.3 4 13.3V6.6L14 2.5Z" fill="#FFFDF9" stroke="#1B2A4A" stroke-width="1.6"/><path d="M9.5 14.2l3 3 6-6.4" fill="none" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="color:var(--navy)">cipherops<span style="color:var(--teal)">_</span>tech</span>
+      <small class="ai-sub">AI &amp; LLM</small>
+    </a>
+    <nav class="tabs" id="siteNav" aria-label="Main"><a href="/" class="navmain">Security</a><a href="/ai-learning" class="navmain" aria-current="page">AI &amp; LLM</a><a href="/aws" class="navmain">AWS Lab</a><a href="/universe" class="navmain">Bounty Universe</a><div class="navdd"><button type="button" class="navdd-btn" id="navDdBtn" aria-expanded="false" aria-controls="navDdMenu">On this page <span aria-hidden="true">▾</span></button><div class="navdd-menu" id="navDdMenu"><span class="navdd-h">On this page</span><a href="#models">The list</a><a href="#choose">How to choose</a><a href="#read">How to read this</a><a href="#safe">Use them safely</a><a href="/ai-learning">AI &amp; LLM course</a></div></div></nav>
+    <div class="hdr-tools"><button class="icon-btn themebtn" id="themeBtn" aria-label="Switch theme">☾</button><button class="icon-btn navbtn" id="navBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">☰</button></div>
+  </div>
+</header>
+<main id="top">
+<section class="lm-hero">
+  <div class="wrap">
+    <nav class="lm-crumb muted" aria-label="Breadcrumb"><a href="/ai-learning">AI &amp; LLM</a> <span aria-hidden="true">›</span> Local security models</nav>
+    <div class="eyebrow">Run it on your own hardware</div>
+    <h1>Security LLMs you can run locally</h1>
+    <p class="lede">Open-weight models trained for cybersecurity, plus the general models and tools that work well for security, so alerts, logs and code never leave your machine. Each entry says what it's good at, what hardware it needs, its licence, the catch, and how to run it.</p>
+    <div class="lm-cta"><a class="btn primary" href="#models">See the list</a><a class="btn" href="#choose">Which one should I use?</a></div>
+    <div class="lm-stats">
+      <div><b id="stSec">0</b><span>security-tuned models</span></div>
+      <div><b id="stGen">0</b><span>general models strong at security</span></div>
+      <div><b id="stTool">0</b><span>runners and tools</span></div>
+      <div><b>&lt;1 GB</b><span>smallest (Antares on a laptop CPU)</span></div>
+    </div>
+    <p class="muted lm-checked">Checked <span id="lmChecked"></span>. Models change quickly; check each model card before you rely on it.</p>
+  </div>
+</section>
+
+<section class="wrap lm-sec" id="models">
+  <div class="lm-filters card">
+    <div><span class="lm-fl">Type</span><div class="chips" id="fKind"></div></div>
+    <div><span class="lm-fl">Task</span><div class="chips" id="fTask"></div></div>
+    <div><span class="lm-fl">Fits on</span><div class="chips" id="fHw"></div></div>
+    <div class="muted mono lm-count" id="lmCount" aria-live="polite"></div>
+  </div>
+  <div class="lm-grid" id="lmGrid"></div>
+</section>
+
+<section class="wrap lm-sec" id="choose">
+  <div class="eyebrow">How to choose</div>
+  <h2>Start from the job, then the hardware</h2>
+  <div class="lm-table card"><table>
+    <thead><tr><th>If you want to…</th><th>Start with</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Triage SIEM alerts privately</td><td>Qwen3.5 9B, or Foundation-Sec-8B-Instruct</td><td>Qwen3.5 9B matched GPT-4.1 in one alert-triage study; Cisco's model was built and piloted for SOC work.</td></tr>
+      <tr><td>Reason about threat intel, CVEs and CWEs</td><td>Foundation-Sec-8B-Reasoning</td><td>Purpose-built security reasoning model; add current advisories through RAG.</td></tr>
+      <tr><td>Find where a known vulnerability sits in your code</td><td>Antares-1B</td><td>Tiny, runs on a CPU, built only for vulnerability localisation.</td></tr>
+      <tr><td>Agentic code review or vulnerability research</td><td>Qwen3.6 35B-A3B (24 GB)</td><td>Strong tool use and reasoning that still fits one consumer GPU.</td></tr>
+      <tr><td>Authorised pentests and red-team prep</td><td>WhiteRabbitNeo V3 7B or DeepHat V1 7B</td><td>Trained for offensive and defensive work; stay within your written scope.</td></tr>
+      <tr><td>GRC, policies and compliance questions</td><td>ZySec-7B, or Llama-Primus-Reasoning</td><td>Trained on governance and certification-style material.</td></tr>
+      <tr><td>Build your own security model</td><td>Foundation-Sec-8B base, or the RedSage releases</td><td>Open base models; RedSage also publishes its training data.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted lm-note">The strongest open models for security (for example GLM-5.3 and Kimi K3, hundreds of billions of parameters) need a multi-GPU server, so they aren't listed as PC options.</p>
+</section>
+
+<section class="wrap lm-sec lm-two" id="read">
+  <div>
+    <div class="eyebrow">How to read this</div>
+    <h2>Sizes, VRAM and run commands</h2>
+    <ul class="lm-list">
+      <li><b>File sizes and VRAM</b> assume a 4-bit (Q4) quantised file and a normal context window. Longer contexts need more memory.</li>
+      <li><b>No GPU?</b> Most 7–9B models run from system RAM on a CPU, just slowly. Antares runs comfortably on a laptop.</li>
+      <li><b>Run commands</b> use Ollama for ready-made GGUF files and vLLM for full Hugging Face weights. LM Studio and llama.cpp can load the same GGUF files.</li>
+      <li><b>Gated models</b> (like Antares) need you to request access on Hugging Face and log in with a token before they download.</li>
+      <li><b>Benchmarks</b> on model cards are usually the makers' own. Test any model on your own data before trusting it.</li>
+    </ul>
+  </div>
+  <div id="safe">
+    <div class="eyebrow">Use them safely</div>
+    <h2>Dual-use tools, real responsibilities</h2>
+    <ul class="lm-list">
+      <li><b>Only test what you're authorised to test.</b> Offensive models don't change the law: get written scope first.</li>
+      <li><b>Keep the box locked down.</b> Don't expose Ollama, vLLM or Open WebUI to the internet; put them behind authentication.</li>
+      <li><b>Sandbox agents.</b> Models that run shell commands (Antares, agentic Qwen setups) belong in a container with no network and no secrets.</li>
+      <li><b>Verify everything.</b> Models invent CVEs, flags and file paths. Treat output as a lead, not a finding.</li>
+      <li><b>Check dates.</b> Training data has a cut-off; pair models with current advisories for anything recent.</li>
+      <li><b>Why no "abliterated" models here?</b> Those strip a model's safety training wholesale. The security-tuned models above already answer security questions, with clearer provenance and terms.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap"><span>© cipherops_tech · Curated list, checked 24 Nov 2026. Sizes and VRAM are approximate. Not affiliated with any model maker.</span>
+  <span>Sources: each model's Hugging Face card and the makers' announcements. <a href="/ai-learning">Back to the AI &amp; LLM course</a></span></div>
+</footer>
+<script src="/assets/js/nav.js?v=2" defer></script>
+<script src="/assets/ai/models.js?v=1" defer></script>
+</body>
+</html>

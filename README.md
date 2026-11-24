@@ -12,6 +12,7 @@ red team and LLM security, from basic to advanced.
 - **Placement test**: 12 questions that recommend a learning path.
 - **Flashcards**: spaced repetition with Leitner boxes, built from lessons, ports and HTTP status codes.
 - **AI & LLM course** (`/ai-learning`): 23 animated step-through lessons in six modules
+- **Security LLMs you can run locally** (`/ai-models`): a curated, filterable list of 12 security-focused open-weight models and 5 runners, with hardware needs, licences, caveats and run commands (checked Nov 2026)
   (foundations, building with the API, prompt engineering, RAG, agents, security & safety), each with
   code samples, a quiz and progress saved in the browser. Content lives in `assets/ai/01-course.js`
   and `assets/ai/02-course.js`; the page logic is `assets/ai/03-app.js`.

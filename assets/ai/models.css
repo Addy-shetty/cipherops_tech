@@ -1,0 +1,49 @@
+/* Security LLMs page. Uses the cipherops_tech design tokens from app.css. */
+.lm-hero{border-bottom:1.5px solid var(--line);background:radial-gradient(circle at 85% 0%,var(--teal-soft),transparent 45%),var(--paper)}
+.lm-hero .wrap{padding-top:36px;padding-bottom:40px}
+.lm-crumb{font-size:14px;margin-bottom:18px}
+.lm-crumb a{color:var(--navy-2)}
+.lm-hero h1{margin:10px 0 14px;max-width:18ch}
+.lm-cta{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 28px}
+.lm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.5px;background:var(--line);border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden;max-width:880px}
+.lm-stats div{background:var(--card);padding:14px 16px;min-width:0}
+.lm-stats b{display:block;font:700 30px/1 var(--f-head);color:var(--navy)}
+.lm-stats span{font-size:14px;color:var(--navy-3)}
+.lm-checked{font-size:14px;margin:12px 0 0}
+.lm-sec{padding-top:44px}
+.lm-sec h2{margin:8px 0 18px}
+.lm-filters{display:grid;gap:12px;padding:16px 18px;position:sticky;top:68px;z-index:5;box-shadow:var(--lift)}
+.lm-filters>div{display:flex;gap:12px;align-items:center;min-width:0}
+.lm-fl{font:500 12px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--navy-3);width:64px;flex:none}
+.lm-filters .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;min-width:0}
+.lm-filters .chips button{flex:none}
+.lm-count{font-size:12.5px}
+.lm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;margin-top:18px}
+.lm-card{padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:var(--lift)}
+.lm-top{display:flex;justify-content:space-between;align-items:center}
+.lm-num{color:var(--navy-3);font-size:13px}
+.lm-card h3{font-size:1.4rem;line-height:1.15}
+.lm-by{font-size:14px;margin-top:-6px}
+.lm-by a{color:var(--teal-2)}
+.lm-what{margin:0;color:var(--navy-2);line-height:1.5}
+.lm-facts{display:grid;gap:6px;margin:0;padding:10px 12px;background:var(--paper-2);border-radius:var(--r-md)}
+.lm-facts div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;font-size:14px}
+.lm-facts dt{font:500 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--navy-3);padding-top:2px}
+.lm-facts dd{margin:0;color:var(--navy)}
+.lm-catch{font-size:14px;line-height:1.5;padding:8px 12px;border-left:3px solid var(--amber);background:var(--amber-soft);border-radius:0 8px 8px 0;color:var(--navy)}
+.lm-run{position:relative;margin-top:auto}
+.lm-run pre{margin:0;padding:12px 70px 12px 12px;background:#0E152B;color:#DCE6FF;border-radius:var(--r-md);font-size:12.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.lm-copy{position:absolute;top:7px;right:7px;color:#DCE6FF;border-color:rgba(220,230,255,.3)}
+.lm-copy:hover{color:#fff}
+.lm-table{overflow-x:auto;padding:0}
+.lm-table table{width:100%;min-width:640px;border-collapse:collapse;font-size:15px}
+.lm-table th{text-align:left;font:500 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--navy-3);padding:12px 16px;background:var(--paper-2)}
+.lm-table td{padding:12px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--navy-2)}
+.lm-table td:first-child{color:var(--navy);font-weight:600}
+.lm-note{font-size:14.5px;margin-top:10px}
+.lm-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}
+.lm-list{margin:0;padding-left:20px;display:grid;gap:10px;line-height:1.55;color:var(--navy-2)}
+.lm-list b{color:var(--navy)}
+@media (max-width:900px){.lm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.lm-two{grid-template-columns:minmax(0,1fr)}.lm-filters{position:static}}
+@media (max-width:520px){.lm-grid{grid-template-columns:minmax(0,1fr)}.lm-fl{width:auto}.lm-filters>div{flex-direction:column;align-items:flex-start}}
+.lm-run pre code{background:none;border:0;padding:0;color:inherit;font:inherit;white-space:inherit}
