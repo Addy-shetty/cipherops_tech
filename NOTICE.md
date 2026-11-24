@@ -39,3 +39,9 @@ Barlow, Barlow Semi Condensed (SIL Open Font License 1.1) and JetBrains Mono (SI
 
 ## Not affiliated
 cipherops_tech is not affiliated with or endorsed by HackerOne, Bugcrowd, Intigriti, YesWeHack, Immunefi, HackenProof, Mozilla, Protect AI, OWASP, MITRE, PortSwigger, HackTricks, Hacking Articles, Hack The Box or TryHackMe.
+
+## three.js
+
+`assets/ai/models-fx.js` bundles parts of three.js r187 (https://threejs.org), used for the animated hero on `/ai-models`.
+
+MIT License · Copyright © 2010-2026 three.js authors. Full licence text: https://github.com/mrdoob/three.js/blob/dev/LICENSE

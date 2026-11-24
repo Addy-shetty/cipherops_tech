@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="/assets/css/app.css?v=10">
 <link rel="stylesheet" href="/assets/css/walk.css?v=4">
 <link rel="stylesheet" href="/assets/ai/ai.css?v=3">
-<link rel="stylesheet" href="/assets/ai/models.css?v=2">
+<link rel="stylesheet" href="/assets/ai/models.css?v=3">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -40,7 +40,9 @@
 </header>
 <main id="top">
 <section class="lm-hero">
-  <div class="wrap">
+  <div class="lm-scene" id="lmScene" aria-hidden="true"></div>
+  <div class="wrap lm-hero-in">
+   <div class="lm-hero-txt">
     <nav class="lm-crumb muted" aria-label="Breadcrumb"><a href="/ai-learning">AI &amp; LLM</a> <span aria-hidden="true">›</span> Local security models</nav>
     <div class="eyebrow">Run it on your own hardware</div>
     <h1>Security LLMs you can run locally</h1>
@@ -53,6 +55,12 @@
       <div><b>&lt;1 GB</b><span>smallest (Antares on a laptop CPU)</span></div>
     </div>
     <p class="muted lm-checked">Checked <span id="lmChecked"></span>. Models change quickly; check each model card before you rely on it.</p>
+   </div>
+   <figure class="lm-term" id="lmTerm" aria-label="Animated terminal: local security models answering example questions">
+     <div class="tm-top"><span class="tm-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="tm-tab mono"></span></div>
+     <div class="tm-body mono" aria-hidden="true"></div>
+     <figcaption class="tm-cap mono">Illustrative output · not a benchmark</figcaption>
+   </figure>
   </div>
 </section>
 
@@ -117,5 +125,6 @@
 </footer>
 <script src="/assets/js/nav.js?v=2" defer></script>
 <script src="/assets/ai/models.js?v=2" defer></script>
+<script src="/assets/ai/models-fx.js?v=1" defer></script>
 </body>
 </html>
