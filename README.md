@@ -36,6 +36,8 @@ red team and LLM security, from basic to advanced.
 It's a static site with no build step, no framework and no backend. Progress is saved in the
 visitor's browser (localStorage).
 
+How the site is built (pages, content model, shared engines, state, CSP rules, adding things): **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+
 ## Run locally
 ```bash
 npx serve .          # or: python3 -m http.server 8000
