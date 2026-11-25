@@ -7,7 +7,7 @@
   nav.addEventListener("click",function(e){ if(e.target.closest("a")) set(false); });
   document.addEventListener("click",function(e){ if(hdr.classList.contains("navopen")&&!hdr.contains(e.target)) set(false); });
   document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&hdr.classList.contains("navopen")){ set(false); btn.focus(); } });
-  window.addEventListener("resize",function(){ if(window.innerWidth>1360) set(false); });
+  window.addEventListener("resize",function(){ if(window.innerWidth>1460) set(false); });
 })();
 
 /* "On this page" dropdown */

@@ -42,7 +42,7 @@ This document describes how the site is put together today, the rules every chan
 - **Design tokens, not raw colours.** Use `--paper`, `--navy`, `--teal`, `--teal-2`, `--amber`, `--red`, `--r-lg`, `--r-md`, `--lift`, `--f-head`, `--f-body`, `--f-mono`. Reuse `.card`, `.btn(.primary/.ghost/.sm)`, `.tag(.basic/.intermediate/.advanced)`, `.chips`, `.eyebrow`, `.lede`, `.muted`, `.wrap`.
 - **Light and dark themes.** The theme is `html[data-theme]`, stored as `cipherops-theme`. Every page applies it on load and redraws theme-aware graphics when it changes.
 - **Respect reduced motion.** Check `prefers-reduced-motion` before any animation loop (`reduced` in `01-core.js`).
-- **No sideways scroll at 390 px.** The top nav collapses to the ☰ menu below 1360 px (`app.css` and `nav.js`).
+- **No sideways scroll at 390 px.** The top nav collapses to the ☰ menu below 1460 px (`app.css` and `nav.js`).
 - **Everything is simulated.** Labs and attacks never touch a real target. Content stays concept-level and defensive, and real-system steps say "only with written permission".
 - **Original writing.** Lessons are our own text. "Go deeper" links point to OWASP, PortSwigger, MITRE, HackTricks and so on, but we don't copy them. Content sourcing rules are in the project notes and `NOTICE.md`.
 - **Bump the `?v=` query** on a script or stylesheet tag whenever that file changes (`/assets/...` is cached for a day with stale-while-revalidate).
@@ -53,6 +53,7 @@ This document describes how the site is put together today, the rules every chan
 ```mermaid
 flowchart TB
   subgraph pages["Pages (one index.html each, cleanUrls)"]
+    found["/foundations  Internet + Linux basics"]
     home["/  Security: Attack Explorer, curriculum,<br/>labs, placement, flashcards"]
     ai["/ai-learning  AI & LLM course"]
     models["/ai-models  Security LLMs you can run locally"]
@@ -152,6 +153,16 @@ There are 12 services plus a `CAPSTONE` incident. Each has `{id, svc, name, grou
 
 There are 6 modules and 23 lessons, added with `addL()`. Each lesson has a `scene` for the player, code samples, and a quiz. `04-try.js` attaches live controls (`scene.try`) whose numbers are illustrative models.
 
+### Foundations (`/foundations`, `assets/found/`)
+
+The start-here section uses the new lesson layout: Goal → How it works → Explore (or The 10 commands) → Try it → Why it matters → Check → Next up, with a pinned section nav.
+
+- `01-net.js`: `NET_LESSONS`, 8 internet lessons. Each has `{id, title, min, goal, learn[], intro[], scene, widget, missions[], why[], quiz[]}`. The `scene` uses the `WALK` player's format. Its text is written with `<code>`/`<b>` and converted to the player's backtick/`**` markdown at render time.
+- `02-linux.js`: `FOUND_CMDS`, the 100 commands `{c, g, d, s, e[[cmd, meaning]], sec}`, which also feed `man` in the terminal, plus `LINUX_LESSONS` (10 lessons, 10 commands each, linked by `g`).
+- `03-shell.js`: `SHELL.create(host, {onRun})`, a simulated Ubuntu terminal. It has a fake file system with owners and modes, users with `sudo`, processes and jobs, and canned DNS/HTTP/TLS answers. It supports pipes, `>`/`>>`/`2>`, `;`/`&&`/`||`, quotes, `$VAR`, `~`, globs, aliases, executable scripts, history and Tab completion. It covers all 100 commands plus a few extras.
+- `04-app.js`: routing (`#lesson-id`, `#commands`), the sidebar, the widgets (`packets`, `ipcalc`, `ports`, `records`, `http`, `sniff`, `osi`, `url`) and progress.
+- A mission is `{t, h, c(ev, T)}`. After every command the terminal calls `onRun(ev, T)` with `ev = {line, cmds, out, err, code}`, and each open mission's check runs against it. One terminal instance is shared across lessons, so files you make persist until you press Reset.
+
 ### Security LLMs (`M` in `ai/models.js`)
 
 There are 17 entries with `{kind: sec/gen/tool, name, by, host, url, what, best, tasks[], size, file, hw, vram, licence, catchTxt, run}`, plus a `CHECKED` date. The filters are `KINDS`, `TASKS` and `HW` (`HW` is an ordered array).
@@ -184,6 +195,7 @@ There are 17 entries with `{kind: sec/gen/tool, name, by, host, url, what, best,
 | Placement result | `cipherops-placement` | answers and level | 06-learning |
 | Explorer scenarios seen | `cipherops-xseen` | ids | 04-explorer |
 | AI course | `cipherops:ai:progress`, `:last`, `:prefs`, `:recent` | `{id:{max, done, quiz}}` | ai/03-app |
+| Foundations | `cipherops-foundations` | `{done:{id}, m:{id:[mission idx]}, quiz:{id:{q:a}}, last}` | found/04-app |
 | Theme | `cipherops-theme` | `light` / `dark` | every page |
 | Universe intro dismissed | `bu-intro` | `"1"` | universe.js |
 

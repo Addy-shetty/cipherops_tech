@@ -490,7 +490,7 @@ nav.tabs a.navmain[aria-current="page"]{color:var(--navy);background:var(--teal-
 .navdd-menu a{display:block;padding:9px 12px;border-radius:9px;color:var(--navy-2);text-decoration:none;font-size:15px}
 .navdd-menu a:hover,.navdd-menu a:focus-visible{background:var(--paper-2);color:var(--navy)}
 .navdd-h{display:none}
-@media (max-width:1360px){
+@media (max-width:1460px){
   .navbtn{display:inline-flex}
   nav.tabs{display:none}
   header.top.navopen nav.tabs{display:flex;flex-direction:column;align-items:stretch;gap:2px;position:absolute;top:calc(100% + 1px);right:var(--s4);left:auto;margin:0;width:min(300px,calc(100vw - 24px));max-height:calc(100vh - 80px);overflow:auto;background:var(--card);border:1.5px solid var(--line-2);border-radius:14px;padding:8px;box-shadow:0 14px 40px rgba(20,33,58,.18);z-index:40}
@@ -533,7 +533,7 @@ img,svg,video,canvas{max-width:100%}
 .lwalk .wpanel{min-height:0}
 @media (pointer:coarse){.lw-hint{display:none}}
 .logo svg{flex:none} .logo{flex:none}
-@media (max-width:1400px){.hdr-prog .bar{display:none}}
+@media (max-width:1600px){.hdr-prog .bar{display:none}}
 
 /* ---------- full-width desktop layout (v9): use the whole monitor ---------- */
 @media (min-width:761px){

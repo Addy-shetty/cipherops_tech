@@ -3,6 +3,7 @@
 A warm, beginner-friendly cybersecurity learning site. It covers web, Android/iOS, cloud,
 red team and LLM security, from basic to advanced.
 
+- **Foundations** (`/foundations`): start here. 8 animated lessons on how the internet works (packets, IP and subnets, TCP/UDP and ports, DNS, HTTP, HTTPS/TLS, the OSI model, what happens when you type a URL), each with an interactive tool, plus 10 Linux lessons covering 100 commands, all practised in a simulated terminal with self-checking tasks and a searchable command reference. Files: `assets/found/`.
 - **Attack Explorer**: 18 attacks walked through packet by packet. It has Network and
   Sequence views, a packet-flow table with play, step and speed controls, a byte-level
   decoder, a kill-chain stage bar, and a Defence toggle that replays each attack with the fix on.
